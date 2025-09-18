@@ -3,6 +3,7 @@ package com.lonwulf.sudoku.web;
 import com.lonwulf.sudoku.data.dto.CompletionResponseDTO;
 import com.lonwulf.sudoku.data.dto.ScoreRequestDTO;
 import com.lonwulf.sudoku.data.dto.ScoreResponseDTO;
+import com.lonwulf.sudoku.data.entity.User;
 import com.lonwulf.sudoku.security.AuthUtil;
 import com.lonwulf.sudoku.service.ScoreService;
 import org.springframework.security.core.Authentication;
@@ -28,15 +29,13 @@ public class ScoreController {
 
     @PostMapping("/complete")
     public CompletionResponseDTO recordCompletion(Authentication authentication) {
-        String userId = authUtil.getUserId(authentication);
-        String email = authUtil.getEmail(authentication);
-        String displayName = authUtil.getDisplayName(authentication);
-        return scoreService.recordCompletion(userId, email, displayName);
+        User user = authUtil.ensureUserExists(authentication);
+        return scoreService.recordCompletion(user);
     }
 
     @GetMapping("/my_score")
     public Map<String, Object> getMyScore(Authentication authentication) {
-        String userId = authUtil.getUserId(authentication);
+        String userId = authUtil.ensureUserExists(authentication).getId();
         int completed = scoreService.getCompletedCount(userId);
         return Map.of("userId", userId, "puzzlesCompleted", completed);
     }
@@ -46,10 +45,10 @@ public class ScoreController {
             @RequestBody ScoreRequestDTO request,
             Authentication authentication
     ) {
-        String userId = authUtil.getUserId(authentication);
+        User user = authUtil.ensureUserExists(authentication);
 
         return scoreService.submitScore(
-                userId,
+                user,
                 request.getPointsEarned(),
                 request.isCompleted()
         );
