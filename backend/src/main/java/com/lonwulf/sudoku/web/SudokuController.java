@@ -2,6 +2,7 @@ package com.lonwulf.sudoku.web;
 
 import com.lonwulf.sudoku.data.dto.SudokuPublicResponseDTO;
 import com.lonwulf.sudoku.data.dto.SudokuResponseDTO;
+import com.lonwulf.sudoku.data.entity.User;
 import com.lonwulf.sudoku.security.AuthUtil;
 import com.lonwulf.sudoku.service.ScoreService;
 import com.lonwulf.sudoku.service.SudokuCacheService;
@@ -24,23 +25,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/sudoku")
 public class SudokuController {
-//    private final SudokuGeneratorService generatorService;
-
-//    public SudokuController(SudokuGeneratorService generatorService) {
-//        this.generatorService = generatorService;
-//    }
-
-    //    @GetMapping("/api/v1/sudoku")
-//    public SudokuResponseDTO getSudoku(
-//            @RequestParam(value = "difficulty", required = false) String difficulty,
-//            @RequestParam(value = "seed", required = false) Long seed,
-//            @RequestParam(value = "clues", required = false) Integer clues,
-//            @RequestParam(value = "includeSolution", required = false, defaultValue = "false") boolean includeSolution
-//    ) {
-//        var res = generatorService.generate(difficulty, seed, clues);
-//        String id = UUID.randomUUID().toString();
-//        return new SudokuResponseDTO(id, difficulty == null ? "medium" : difficulty, res.puzzle, includeSolution ? res.solution : null);
-//    }
     private final SudokuGeneratorServiceWithBitmask generatorService;
     private final SudokuCacheService cacheService;
     private final ScoreService scoreService;
@@ -95,9 +79,7 @@ public class SudokuController {
 
     @PostMapping("/puzzle/{id}/submit")
     public ResponseEntity<?> submitSolution(@PathVariable String id, @RequestBody List<List<Integer>> attempted, Authentication authentication) {
-        String userId = authUtil.getUserId(authentication);
-        String email = authUtil.getEmail(authentication);
-        String displayName = authUtil.getDisplayName(authentication);
+        User user = authUtil.ensureUserExists(authentication);
 
         int[][] correctSolution = cacheService.getSolution(id);
         if (correctSolution == null) {
@@ -112,7 +94,7 @@ public class SudokuController {
         if (!isCorrect) {
             return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "Incorrect solution"));
         }
-        scoreService.recordCompletion(userId, email, displayName);
+        scoreService.recordCompletion(user);
         return ResponseEntity.ok(Map.of("status", "success", "message", "Puzzle solved!"));
     }
 }
