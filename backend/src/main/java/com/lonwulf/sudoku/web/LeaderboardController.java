@@ -1,10 +1,14 @@
 package com.lonwulf.sudoku.web;
 
 import com.lonwulf.sudoku.data.dto.LeaderboardResponseDTO;
+import com.lonwulf.sudoku.data.entity.User;
 import com.lonwulf.sudoku.security.AuthUtil;
 import com.lonwulf.sudoku.service.ScoreService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +33,7 @@ public class LeaderboardController {
             @RequestParam(defaultValue = "2") @Min(1) @Max(10) int window,
             Authentication authentication
     ) {
-        String userId = authUtil.getUserId(authentication);
-        return scoreService.getLeaderboardData(userId, page, size, window);
+        User user = authUtil.ensureUserExists(authentication);
+        return scoreService.getLeaderboardData(user, page, size, window);
     }
 }
