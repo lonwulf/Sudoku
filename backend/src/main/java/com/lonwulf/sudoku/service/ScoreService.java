@@ -38,6 +38,10 @@ public class ScoreService {
         this.redisTemplate = redisTemplate;
     }
 
+    private String getLeaderboardKey(User user) {
+        return user.isShadowBanned() ? Constants.SHADOW_LEADERBOARD : Constants.GLOBAL_LEADERBOARD;
+    }
+
     @Transactional
     public CompletionResponseDTO recordCompletion(String userId, String email, String displayName) {
         String safeName = (displayName != null && !displayName.isBlank()) ? displayName : "Anonymous";
@@ -63,12 +67,10 @@ public class ScoreService {
         userScoreRepo.save(score);
 
         // Update Redis leaderboard
-        String leaderboardKey = user.isShadowBanned() ? Constants.SHADOW_LEADERBOARD : Constants.GLOBAL_LEADERBOARD;
-        redisTemplate.opsForZSet().incrementScore(leaderboardKey, userId, 1);
+        redisTemplate.opsForZSet().incrementScore(getLeaderboardKey(user), userId, 1);
 
         return new CompletionResponseDTO(userId, score.getPuzzlesCompleted());
     }
-
 
 
     public int getCompletedCount(String userId) {
@@ -81,9 +83,8 @@ public class ScoreService {
     public ScoreResponseDTO submitScore(String userId, int pointsEarned, boolean completed) {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        String leaderboardKey = user.isShadowBanned() ? Constants.SHADOW_LEADERBOARD : Constants.GLOBAL_LEADERBOARD;
         // Update Redis leaderboard
-        redisTemplate.opsForZSet().incrementScore(leaderboardKey, userId, pointsEarned);
+        redisTemplate.opsForZSet().incrementScore(getLeaderboardKey(user), userId, pointsEarned);
 
         // Update SQL score
         UserScore userScore = userScoreRepo.findByUserId(userId)
@@ -95,8 +96,8 @@ public class ScoreService {
         userScoreRepo.save(userScore);
 
         // Get updated rank + score
-        Long rank = redisTemplate.opsForZSet().reverseRank(leaderboardKey, userId);
-        Double totalScore = redisTemplate.opsForZSet().score(leaderboardKey, userId);
+        Long rank = redisTemplate.opsForZSet().reverseRank(getLeaderboardKey(user), userId);
+        Double totalScore = redisTemplate.opsForZSet().score(getLeaderboardKey(user), userId);
 
         return new ScoreResponseDTO(
                 userId,
@@ -118,9 +119,8 @@ public class ScoreService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         List<Object> pipelineResults = redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
-            String leaderboardKey = user.isShadowBanned() ? Constants.SHADOW_LEADERBOARD : Constants.GLOBAL_LEADERBOARD;
 
-            byte[] key = redisTemplate.getStringSerializer().serialize(leaderboardKey);
+            byte[] key = redisTemplate.getStringSerializer().serialize(getLeaderboardKey(user));
             byte[] userKey = redisTemplate.getStringSerializer().serialize(userId);
 
             connection.zRevRangeWithScores(key, start, end); // global

@@ -1,2 +1,2 @@
 rootProject.name = 'sudoku'
-include 'backend'
+include 'backend', 'mobile'
