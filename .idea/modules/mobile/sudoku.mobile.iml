@@ -5,6 +5,18 @@
       <excludeFolder url="file://$MODULE_DIR$/../../../mobile/sudoku/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/../../../mobile/sudoku/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/../../../mobile/sudoku/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../mobile/sudoku/linux/flutter/ephemeral/.plugin_symlinks/connectivity_plus/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../mobile/sudoku/linux/flutter/ephemeral/.plugin_symlinks/connectivity_plus/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../mobile/sudoku/linux/flutter/ephemeral/.plugin_symlinks/connectivity_plus/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../mobile/sudoku/linux/flutter/ephemeral/.plugin_symlinks/connectivity_plus/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../mobile/sudoku/linux/flutter/ephemeral/.plugin_symlinks/connectivity_plus/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../mobile/sudoku/linux/flutter/ephemeral/.plugin_symlinks/connectivity_plus/example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../mobile/sudoku/windows/flutter/ephemeral/.plugin_symlinks/connectivity_plus/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../mobile/sudoku/windows/flutter/ephemeral/.plugin_symlinks/connectivity_plus/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../mobile/sudoku/windows/flutter/ephemeral/.plugin_symlinks/connectivity_plus/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../mobile/sudoku/windows/flutter/ephemeral/.plugin_symlinks/connectivity_plus/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../mobile/sudoku/windows/flutter/ephemeral/.plugin_symlinks/connectivity_plus/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../mobile/sudoku/windows/flutter/ephemeral/.plugin_symlinks/connectivity_plus/example/build" />
     </content>
   </component>
 </module>
