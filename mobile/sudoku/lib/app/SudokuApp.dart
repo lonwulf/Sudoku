@@ -5,6 +5,10 @@ import 'package:sudoku/modules/home/presentation/screens/MainScreen.dart';
 
 import '../theme/AppTheme.dart';
 
+void main() {
+  runApp(const SudokuApp());
+}
+
 class SudokuApp extends StatelessWidget {
   const SudokuApp({super.key});
 
