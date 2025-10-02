@@ -10,10 +10,16 @@ import 'package:sudoku/src/core/util/LoggerService.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  await dotenv.load(fileName: ".env");
+  try {
+    await dotenv.load(fileName: ".env");
+    debugPrint("✅ Env loaded: ${dotenv.env}");
+  } catch (e) {
+    await dotenv.load(fileName: "mobile/.env");
+    debugPrint("❌ Failed to load .env: $e");
+  }
   runZonedGuarded(
-    () async {
-      await SentryFlutter.init((options) {
+    () {
+      return SentryFlutter.init((options) {
         options.dsn = dotenv.env['SENTRY_DSN'];
         options.tracesSampleRate = 1.0;
       }, appRunner: () => runApp(const SudokuApp()));
