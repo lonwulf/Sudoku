@@ -10,9 +10,6 @@ class CoreModule {
     getIt.registerLazySingleton<Dio>(
         () => provideDioClient(getIt<PrettyDioLogger>())
     );
-    getIt.registerSingleton<CoreRemoteDataSource>(
-        CoreRemoteDataSource(getIt<APIService>())
-    );
   }
 
   Dio provideDioClient(PrettyDioLogger logger) {

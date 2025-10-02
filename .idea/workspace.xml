@@ -1,179 +1,223 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AutoImportSettings">
-    <option name="autoReloadType" value="SELECTIVE" />
-  </component>
-  <component name="ChangeListManager">
-    <list default="true" id="358d71e2-ecd7-49ac-9c13-03e8cdfe0ff6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gradle/8.14/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14/executionHistory/executionHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.14/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14/executionHistory/executionHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.14/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.14/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/reports/problems/problems-report.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/problems/problems-report.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/lib/modules/home/presentation/screens/MainScreen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/lib/modules/home/presentation/screens/MainScreen.dart" afterDir="false" />
-    </list>
-    <option name="SHOW_DIALOG" value="false" />
-    <option name="HIGHLIGHT_CONFLICTS" value="true" />
-    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
-    <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-  <component name="ExternalProjectsData">
-    <projectState path="$PROJECT_DIR$">
-      <ProjectState />
-    </projectState>
-  </component>
-  <component name="ExternalProjectsManager">
-    <system id="GRADLE">
-      <state>
-        <projects_view>
-          <tree_state>
-            <expand>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="sudoku" type="f1a62948:ProjectNode" />
-              </path>
-            </expand>
-            <select />
-          </tree_state>
-        </projects_view>
-      </state>
-    </system>
-  </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Class" />
-        <option value="Dockerfile" />
-        <option value="Dart File" />
-      </list>
-    </option>
-  </component>
-  <component name="Git.Settings">
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="feature/add-docker" />
-      </map>
-    </option>
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;lonwulf&quot;
-  }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/lonwulf/Sudoku.git&quot;,
-    &quot;accountId&quot;: &quot;ff97a36e-9749-47ff-9908-d5d08d7750fe&quot;
-  }
-}</component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.data/spring-data-redis/3.5.3/aae4792368574a4f4e83f08de7af05ab2cf3c7e4/spring-data-redis-3.5.3-sources.jar!/org/springframework/data/redis/connection/DefaultedRedisConnection.java" root0="SKIP_INSPECTION" />
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 5
-}</component>
-  <component name="ProjectId" id="32miR9Lp1QQMkq7G0mOerr7G7h7" />
-  <component name="ProjectViewState">
-    <option name="showLibraryContents" value="true" />
-  </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Explyt Spring.SudokuApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Flutter.SudokuApp.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Build sudoku.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
-    &quot;NotificationExplytEndpoints&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/mobile-app-backbone&quot;,
-    &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/lonwulf/Videos&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;dart.settings&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
-  }
-}</component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/mobile/sudoku/lib" />
-    </key>
-  </component>
-  <component name="RunManager" selected="Flutter.SudokuApp">
-    <configuration default="true" type="Application" factoryName="Application">
-      <module name="sudoku" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="SudokuApp" type="FlutterRunConfigurationType" factoryName="Flutter">
-      <option name="filePath" value="$PROJECT_DIR$/mobile/sudoku/lib/app/SudokuApp.dart" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="GradleRunConfiguration" factoryName="Gradle">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
+    <component name="AutoImportSettings">
+        <option name="autoReloadType" value="SELECTIVE"/>
+    </component>
+    <component name="ChangeListManager">
+        <list default="true" id="358d71e2-ecd7-49ac-9c13-03e8cdfe0ff6" name="Changes" comment="">
+            <change beforePath="$PROJECT_DIR$/.gradle/8.14/executionHistory/executionHistory.bin" beforeDir="false"
+                    afterPath="$PROJECT_DIR$/.gradle/8.14/executionHistory/executionHistory.bin" afterDir="false"/>
+            <change beforePath="$PROJECT_DIR$/.gradle/8.14/executionHistory/executionHistory.lock" beforeDir="false"
+                    afterPath="$PROJECT_DIR$/.gradle/8.14/executionHistory/executionHistory.lock" afterDir="false"/>
+            <change beforePath="$PROJECT_DIR$/.gradle/8.14/fileHashes/fileHashes.bin" beforeDir="false"
+                    afterPath="$PROJECT_DIR$/.gradle/8.14/fileHashes/fileHashes.bin" afterDir="false"/>
+            <change beforePath="$PROJECT_DIR$/.gradle/8.14/fileHashes/fileHashes.lock" beforeDir="false"
+                    afterPath="$PROJECT_DIR$/.gradle/8.14/fileHashes/fileHashes.lock" afterDir="false"/>
+            <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false"
+                    afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false"/>
+            <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false"
+                    afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false"/>
+            <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false"
+                    afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false"/>
+            <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false"
+                    afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false"/>
+            <change beforePath="$PROJECT_DIR$/build/reports/problems/problems-report.html" beforeDir="false"
+                    afterPath="$PROJECT_DIR$/build/reports/problems/problems-report.html" afterDir="false"/>
+            <change beforePath="$PROJECT_DIR$/mobile/sudoku/lib/modules/home/presentation/screens/MainScreen.dart"
+                    beforeDir="false"
+                    afterPath="$PROJECT_DIR$/mobile/sudoku/lib/modules/home/presentation/screens/MainScreen.dart"
+                    afterDir="false"/>
+        </list>
+        <option name="SHOW_DIALOG" value="false"/>
+        <option name="HIGHLIGHT_CONFLICTS" value="true"/>
+        <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false"/>
+        <option name="LAST_RESOLUTION" value="IGNORE"/>
+    </component>
+    <component name="ExternalProjectsData">
+        <projectState path="$PROJECT_DIR$">
+            <ProjectState/>
+        </projectState>
+    </component>
+    <component name="ExternalProjectsManager">
+        <system id="GRADLE">
+            <state>
+                <projects_view>
+                    <tree_state>
+                        <expand>
+                            <path>
+                                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode"/>
+                                <item name="sudoku" type="f1a62948:ProjectNode"/>
+                            </path>
+                        </expand>
+                        <select/>
+                    </tree_state>
+                </projects_view>
+            </state>
+        </system>
+    </component>
+    <component name="FileTemplateManagerImpl">
+        <option name="RECENT_TEMPLATES">
+            <list>
+                <option value="Class"/>
+                <option value="Dockerfile"/>
+                <option value="Dart File"/>
+            </list>
         </option>
-        <option name="taskNames">
-          <list />
+    </component>
+    <component name="Git.Settings">
+        <option name="RECENT_BRANCH_BY_REPOSITORY">
+            <map>
+                <entry key="$PROJECT_DIR$" value="feature/add-docker"/>
+            </map>
         </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>false</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <configuration name="SudokuApplication" type="Spring Boot" factoryName="Spring Boot" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.lonwulf.sudoku.SudokuApplication" />
-      <module name="sudoku.backend.main" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="Spring Boot" factoryName="Spring Boot">
-      <module name="sudoku" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/backend" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <list>
-      <item itemvalue="Explyt Spring.SudokuApplication" />
-      <item itemvalue="Flutter.SudokuApp" />
-    </list>
-  </component>
-  <component name="SwiftWorkspaceSettings">
-    <option name="detectedToolchain" value="true" />
-    <option name="toolchainPathValue" value="$USER_HOME$/.local/share/swiftly" />
-  </component>
-  <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
-      <changelist id="358d71e2-ecd7-49ac-9c13-03e8cdfe0ff6" name="Changes" comment="" />
-      <created>1758032140163</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1758032140163</updated>
-      <workItem from="1758102483729" duration="3007000" />
-      <workItem from="1758106380719" duration="4362000" />
-    </task>
-    <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
-  </component>
+        <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$"/>
+    </component>
+    <component name="GitHubPullRequestSearchHistory">{
+        &quot;lastFilter&quot;: {
+        &quot;state&quot;: &quot;OPEN&quot;,
+        &quot;assignee&quot;: &quot;lonwulf&quot;
+        }
+        }
+    </component>
+    <component name="GithubPullRequestsUISettings">{
+        &quot;selectedUrlAndAccountId&quot;: {
+        &quot;url&quot;: &quot;https://github.com/lonwulf/Sudoku.git&quot;,
+        &quot;accountId&quot;: &quot;ff97a36e-9749-47ff-9908-d5d08d7750fe&quot;
+        }
+        }
+    </component>
+    <component name="HighlightingSettingsPerFile">
+        <setting
+                file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.data/spring-data-redis/3.5.3/aae4792368574a4f4e83f08de7af05ab2cf3c7e4/spring-data-redis-3.5.3-sources.jar!/org/springframework/data/redis/connection/DefaultedRedisConnection.java"
+                root0="SKIP_INSPECTION"/>
+    </component>
+    <component name="ProjectColorInfo">{
+        &quot;customColor&quot;: &quot;&quot;,
+        &quot;associatedIndex&quot;: 5
+        }
+    </component>
+    <component name="ProjectId" id="32miR9Lp1QQMkq7G0mOerr7G7h7"/>
+    <component name="ProjectViewState">
+        <option name="showLibraryContents" value="true"/>
+    </component>
+    <component name="PropertiesComponent">{
+        &quot;keyToString&quot;: {
+        <
+        <
+        <
+        <
+        <
+        <
+        < HEAD
+                &quot;Explyt Spring.SudokuApplication.executor&quot;: &quot;Run&quot;,
+        &quot;Flutter.SudokuApp.executor&quot;: &quot;Run&quot;,
+        &quot;Gradle.Build sudoku.executor&quot;: &quot;Run&quot;,
+        =======
+        >>>>>>> 8103dcd1ed9bbc78c3d34da309a877fc5420e2dc
+        &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
+        &quot;NotificationExplytEndpoints&quot;: &quot;true&quot;,
+        &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+        &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+        &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+        &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+        &quot;git-widget-placeholder&quot;: &quot;feature/mobile-app-backbone&quot;,
+        <
+        <
+        <
+        <
+        <
+        <
+        < HEAD
+                &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
+        =======
+        >>>>>>> 8103dcd1ed9bbc78c3d34da309a877fc5420e2dc
+        &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+        &quot;last_opened_file_path&quot;: &quot;/home/lonwulf/Videos&quot;,
+        &quot;settings.editor.selected.configurable&quot;: &quot;dart.settings&quot;,
+        &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
+        }
+        }
+    </component>
+    <component name="RecentsManager">
+        <key name="MoveFile.RECENT_KEYS">
+            <recent name="$PROJECT_DIR$/mobile/sudoku/lib"/>
+        </key>
+    </component>
+
+    <component name="RunManager">
+        <configuration default="true" type="Spring Boot" factoryName="Spring Boot">
+            <module name="sudoku"/>
+            <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/backend"/>
+            <method v="2">
+                <option name="Make" enabled="true"/>
+            </method>
+        </configuration>
+        <configuration default="true" type="Application" factoryName="Application">
+            <module name="sudoku"/>
+            <method v="2">
+                <option name="Make" enabled="true"/>
+            </method>
+        </configuration>
+        <configuration name="SudokuApp" type="FlutterRunConfigurationType" factoryName="Flutter">
+            <option name="filePath" value="$PROJECT_DIR$/mobile/sudoku/lib/app/SudokuApp.dart"/>
+            <method v="2"/>
+        </configuration>
+        <configuration default="true" type="GradleRunConfiguration" factoryName="Gradle">
+            <ExternalSystemSettings>
+                <option name="executionName"/>
+                <option name="externalProjectPath" value=""/>
+                <option name="externalSystemIdString" value="GRADLE"/>
+                <option name="scriptParameters" value=""/>
+                <option name="taskDescriptions">
+                    <list/>
+                </option>
+                <option name="taskNames">
+                    <list/>
+                </option>
+                <option name="vmOptions"/>
+            </ExternalSystemSettings>
+            <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+            <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+            <DebugAllEnabled>false</DebugAllEnabled>
+            <RunAsTest>false</RunAsTest>
+            <method v="2"/>
+        </configuration>
+        <configuration name="SudokuApplication" type="Spring Boot" factoryName="Spring Boot" nameIsGenerated="true">
+            <option name="MAIN_CLASS_NAME" value="com.lonwulf.sudoku.SudokuApplication"/>
+            <module name="sudoku.backend.main"/>
+            <method v="2">
+                <option name="Make" enabled="true"/>
+            </method>
+        </configuration>
+        <configuration default="true" type="Spring Boot" factoryName="Spring Boot">
+            <module name="sudoku"/>
+            <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/backend"/>
+            <method v="2">
+                <option name="Make" enabled="true"/>
+            </method>
+        </configuration>
+        <list>
+            <item itemvalue="Explyt Spring.SudokuApplication"/>
+            <item itemvalue="Flutter.SudokuApp"/>
+        </list>
+    </component>
+    <component name="SwiftWorkspaceSettings">
+        <option name="detectedToolchain" value="true"/>
+        <option name="toolchainPathValue" value="$USER_HOME$/.local/share/swiftly"/>
+    </component>
+    <component name="TaskManager">
+        <task active="true" id="Default" summary="Default task">
+            <changelist id="358d71e2-ecd7-49ac-9c13-03e8cdfe0ff6" name="Changes" comment=""/>
+            <created>1758032140163</created>
+            <option name="number" value="Default"/>
+            <option name="presentableId" value="Default"/>
+            <updated>1758032140163</updated>
+            <workItem from="1758102483729" duration="3007000"/>
+            <workItem from="1758106380719" duration="4362000"/>
+        </task>
+        <servers/>
+    </component>
+    <component name="TypeScriptGeneratedFilesManager">
+        <option name="version" value="3"/>
+    </component>
 </project>
