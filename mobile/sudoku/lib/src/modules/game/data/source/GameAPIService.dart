@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:sudoku/src/modules/game/data/response/SudokuGameDTO.dart';
 
 abstract class GameAPIService{
   Future<SudokuGameDTO> getSudokuChallenge();
