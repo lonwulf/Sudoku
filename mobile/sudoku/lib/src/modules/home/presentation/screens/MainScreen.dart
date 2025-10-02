@@ -108,7 +108,7 @@ class _MainScreenState extends State<MainScreen> {
                   });
                 },
                 child: Container(
-                _MainScreenState  width: 36,
+                  width: 36,
                   height: 36,
                   margin: EdgeInsets.only(
                     right: (col + 1) % 3 == 0 && col != 8 ? 4 : 1,
