@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:sudoku/src/modules/home/presentation/screens/MainScreen.dart';
+import 'package:sudoku/src/modules/game/presentation/screens/MainScreen.dart';
 
 import '../theme/AppTheme.dart';
 

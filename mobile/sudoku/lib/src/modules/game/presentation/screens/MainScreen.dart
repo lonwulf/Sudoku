@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:sudoku/src/core/util/GenericResultState.dart';
+import 'package:sudoku/src/modules/game/domain/model/SudokuGameModel.dart';
+import 'package:sudoku/src/modules/game/presentation/bloc/MainBloc.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -26,6 +30,12 @@ class _MainScreenState extends State<MainScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    context.read<MainBloc>().fetchSudokuChallenge();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return PlatformScaffold(
       backgroundColor: const Color(0xFF2C3E5A),
@@ -48,27 +58,50 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(
               context.platformIcon(
                 material: Icons.notifications_outlined,
-                cupertino: CupertinoIcons.bell,),
+                cupertino: CupertinoIcons.bell,
+              ),
               color: Color(0xFFFFFFFE),
             ),
             onPressed: () {},
-          )
+          ),
         ],
       ),
       body: SafeArea(
-          child: Column(
-            children: [
-              const SizedBox(height: 20,),
-              buildTimer(),
-              const SizedBox(height: 30,),
-              buildSudokuGrid(),
-              const Spacer(),
-              buildNumberPad(),
-              const SizedBox(height: 20,),
-              buildBottomActions(context),
-              const SizedBox(height: 20,)
-            ],
-          )),
+        child: BlocBuilder<MainBloc, GenericResultState<SudokuGameModel>>(
+          builder: (context, state) {
+            if (state is Loading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is Error) {
+              return Center(
+                child: Text(
+                  'state',//todo fix to `state.msg`
+                  style: const TextStyle(color: Colors.red, fontSize: 16),
+                ),
+              );
+            } else if (state is Success<SudokuGameModel>) {
+              final model = state.value;
+              return buildContent(model!);
+            }
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget buildContent(SudokuGameModel model) {
+    return Column(
+      children: [
+        const SizedBox(height: 20),
+        buildTimer(),
+        const SizedBox(height: 30),
+        buildSudokuGrid(model),
+        const Spacer(),
+        buildNumberPad(model),
+        const SizedBox(height: 20),
+        buildBottomActions(context),
+        const SizedBox(height: 20),
+      ],
     );
   }
 
@@ -76,14 +109,14 @@ class _MainScreenState extends State<MainScreen> {
     return const Text(
       '16:02',
       style: TextStyle(
-          color: Colors.white,
-          fontSize: 48,
-          fontWeight: FontWeight.w300
+        color: Colors.white,
+        fontSize: 48,
+        fontWeight: FontWeight.w300,
       ),
     );
   }
 
-  Widget buildSudokuGrid() {
+  Widget buildSudokuGrid(SudokuGameModel model) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(8),
@@ -98,8 +131,9 @@ class _MainScreenState extends State<MainScreen> {
             children: List.generate(9, (col) {
               int cellIndex = row * 9 + col;
               bool isSelected = selectedCell == cellIndex;
-              bool isHighlighted = board[row][col] == 9;
-              bool isError = board[row][col] == 9 && row == 4 && col == 3;
+              final cells = model.puzzle[row][col];
+              bool isHighlighted = model.puzzle[row][col] == 9;
+              bool isError = model.puzzle[row][col] == 9 && row == 4 && col == 3;
 
               return GestureDetector(
                 onTap: () {
@@ -125,15 +159,15 @@ class _MainScreenState extends State<MainScreen> {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Center(
-                    child: board[row][col] != null
+                    child: cells != null
                         ? Text(
-                      '${board[row][col]}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    )
+                            '$cells',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          )
                         : null,
                   ),
                 ),
@@ -183,25 +217,18 @@ class _MainScreenState extends State<MainScreen> {
             color: const Color(0xFF1E2940),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
-            icon,
-            color: Colors.white70,
-            size: 24,
-          ),
+          child: Icon(icon, color: Colors.white70, size: 24),
         ),
         const SizedBox(height: 8),
         Text(
           label,
-          style: const TextStyle(
-            color: Colors.white54,
-            fontSize: 12,
-          ),
+          style: const TextStyle(color: Colors.white54, fontSize: 12),
         ),
       ],
     );
   }
 
-  Widget buildNumberPad() {
+  Widget buildNumberPad(SudokuGameModel model) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(16),
@@ -219,7 +246,7 @@ class _MainScreenState extends State<MainScreen> {
                 setState(() {
                   int row = selectedCell! ~/ 9;
                   int column = selectedCell! % 9;
-                  board[row][column] = number;
+                  model.puzzle[row][column] = number;
                 });
               }
             },
