@@ -21,7 +21,7 @@ class NetworkMonitor{
     });
   }
 
-  Future<Void> checkInitialConnection() async {
+  Future<void> checkInitialConnection() async {
     final result = await connectivity.checkConnectivity();
     final isConnected = result != ConnectivityResult.none;
     networkChangeController.add(isConnected);
