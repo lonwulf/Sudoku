@@ -71,10 +71,10 @@ class _MainScreenState extends State<MainScreen> {
           builder: (context, state) {
             if (state is Loading) {
               return const Center(child: CircularProgressIndicator());
-            } else if (state is Error) {
+            } else if (state is Error<SudokuGameModel>) {
               return Center(
                 child: Text(
-                  'state',//todo fix to `state.msg`
+                  state.toString(),//todo fix to `state.msg`
                   style: const TextStyle(color: Colors.red, fontSize: 16),
                 ),
               );

@@ -14,7 +14,7 @@ class MainUseCase {
       case APIStatus.success:
         return GenericUseCaseResult(
           value: result.result!,
-          isSuccessful: result.code == 200,
+          isSuccessful: true,
         );
       case APIStatus.error:
         return GenericUseCaseResult(

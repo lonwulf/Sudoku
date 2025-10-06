@@ -17,14 +17,11 @@ Future<void> main() async {
     await dotenv.load(fileName: ".env");
     debugPrint("✅ Env loaded: ${dotenv.env}");
   } catch (e) {
-    // await dotenv.load(fileName: "mobile/.env");
     debugPrint("❌ Failed to load .env: $e");
     throw StateError('This is test exception');
   }
   await setupNetworkDependencies();
   await setupGameModuleDependencies();
-  // debugPrint("🚀 Starting app without Sentry");
-  // runApp(const SudokuApp());
   runZonedGuarded(
     () {
       return SentryFlutter.init((options) {
