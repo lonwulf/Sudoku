@@ -16,6 +16,13 @@
             </list>
           </value>
         </entry>
+        <entry key="ansicolor">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/ansicolor-2.0.3/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="args">
           <value>
             <list>
@@ -222,7 +229,7 @@
         <entry key="flutter">
           <value>
             <list>
-              <option value="$USER_HOME$/develop/flutter/packages/flutter/lib" />
+              <option value="$USER_HOME$/flutter/flutter/packages/flutter/lib" />
             </list>
           </value>
         </entry>
@@ -264,14 +271,14 @@
         <entry key="flutter_test">
           <value>
             <list>
-              <option value="$USER_HOME$/develop/flutter/packages/flutter_test/lib" />
+              <option value="$USER_HOME$/flutter/flutter/packages/flutter_test/lib" />
             </list>
           </value>
         </entry>
         <entry key="flutter_web_plugins">
           <value>
             <list>
-              <option value="$USER_HOME$/develop/flutter/packages/flutter_web_plugins/lib" />
+              <option value="$USER_HOME$/flutter/flutter/packages/flutter_web_plugins/lib" />
             </list>
           </value>
         </entry>
@@ -286,6 +293,13 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/glob-2.1.3/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="globbing">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/globbing-1.0.0/lib" />
             </list>
           </value>
         </entry>
@@ -314,6 +328,13 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/http_parser-4.1.2/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="injector">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/injector-3.0.0/lib" />
             </list>
           </value>
         </entry>
@@ -464,6 +485,13 @@
             </list>
           </value>
         </entry>
+        <entry key="platform">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/platform-3.1.6/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="plugin_platform_interface">
           <value>
             <list>
@@ -482,6 +510,20 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/pretty_dio_logger-1.4.0/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="process">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/process-5.0.5/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="properties">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/properties-2.1.1/lib" />
             </list>
           </value>
         </entry>
@@ -513,6 +555,13 @@
             </list>
           </value>
         </entry>
+        <entry key="sentry_dart_plugin">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/sentry_dart_plugin-3.1.1/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="sentry_flutter">
           <value>
             <list>
@@ -537,7 +586,7 @@
         <entry key="sky_engine">
           <value>
             <list>
-              <option value="$USER_HOME$/develop/flutter/bin/cache/pkg/sky_engine/lib" />
+              <option value="$USER_HOME$/flutter/flutter/bin/cache/pkg/sky_engine/lib" />
             </list>
           </value>
         </entry>
@@ -594,6 +643,13 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/string_scanner-1.4.1/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="system_info2">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/system_info2-4.1.0/lib" />
             </list>
           </value>
         </entry>
@@ -714,6 +770,7 @@
     <CLASSES>
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/_fe_analyzer_shared-89.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/analyzer-8.2.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/ansicolor-2.0.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/args-2.7.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/async-2.13.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/bloc-9.0.1/lib" />
@@ -750,10 +807,12 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_svg-2.2.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/get_it-8.2.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/glob-2.1.3/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/globbing-1.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/graphs-2.3.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/http-1.5.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/http_multi_server-3.2.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/http_parser-4.1.2/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/injector-3.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/io-1.0.5/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/jni-0.14.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/json_annotation-4.9.0/lib" />
@@ -775,13 +834,17 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path-1.9.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path_parsing-1.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/petitparser-7.0.1/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/platform-3.1.6/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/plugin_platform_interface-2.1.8/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/pool-1.5.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/pretty_dio_logger-1.4.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/process-5.0.5/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/properties-2.1.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/provider-6.1.5+1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/pub_semver-2.2.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/pubspec_parse-1.5.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/sentry-9.6.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/sentry_dart_plugin-3.1.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/sentry_flutter-9.6.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shelf-1.4.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shelf_web_socket-3.0.0/lib" />
@@ -793,6 +856,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/stream_channel-2.1.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/stream_transform-2.1.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/string_scanner-1.4.1/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/system_info2-4.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/term_glyph-1.2.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/test_api-0.7.6/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/typed_data-1.4.0/lib" />
@@ -809,10 +873,10 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/win32-5.14.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/xml-6.6.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/yaml-3.1.3/lib" />
-      <root url="file://$USER_HOME$/develop/flutter/bin/cache/pkg/sky_engine/lib" />
-      <root url="file://$USER_HOME$/develop/flutter/packages/flutter/lib" />
-      <root url="file://$USER_HOME$/develop/flutter/packages/flutter_test/lib" />
-      <root url="file://$USER_HOME$/develop/flutter/packages/flutter_web_plugins/lib" />
+      <root url="file://$USER_HOME$/flutter/flutter/bin/cache/pkg/sky_engine/lib" />
+      <root url="file://$USER_HOME$/flutter/flutter/packages/flutter/lib" />
+      <root url="file://$USER_HOME$/flutter/flutter/packages/flutter_test/lib" />
+      <root url="file://$USER_HOME$/flutter/flutter/packages/flutter_web_plugins/lib" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

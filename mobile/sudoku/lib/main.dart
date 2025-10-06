@@ -10,13 +10,18 @@ import 'package:sudoku/src/core/util/LoggerService.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  // throw StateError('This is test exception');
+
   try {
     await dotenv.load(fileName: ".env");
     debugPrint("✅ Env loaded: ${dotenv.env}");
   } catch (e) {
-    await dotenv.load(fileName: "mobile/.env");
+    // await dotenv.load(fileName: "mobile/.env");
     debugPrint("❌ Failed to load .env: $e");
+    throw StateError('This is test exception');
   }
+  // debugPrint("🚀 Starting app without Sentry");
+  // runApp(const SudokuApp());
   runZonedGuarded(
     () {
       return SentryFlutter.init((options) {
@@ -26,6 +31,7 @@ Future<void> main() async {
     },
     (error, stacktrace) {
       LoggerService.logError(error, stackTrace: stacktrace);
+      throw StateError('This is test exception');
     },
   );
 }

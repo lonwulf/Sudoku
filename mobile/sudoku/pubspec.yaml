@@ -49,6 +49,7 @@ dependencies:
   equatable: ^2.0.7
 
 dev_dependencies:
+  sentry_dart_plugin: ^3.1.1
   flutter_test:
     sdk: flutter
 
@@ -103,3 +104,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+sentry:
+  upload_debug_symbols: true
+  upload_source_maps: true
+  project: flutter
+  org: sudoku-idp
