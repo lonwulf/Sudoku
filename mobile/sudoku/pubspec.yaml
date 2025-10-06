@@ -1,5 +1,5 @@
 name: sudoku
-description: "A new Flutter project."
+description: "Sudoku Mobile App"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -34,8 +34,22 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  dio: ^5.9.0
+  get_it: ^8.2.0
+  pretty_dio_logger: ^1.4.0
+  connectivity_plus: ^7.0.0
+  json_annotation: ^4.9.0
+  json_serializable: ^6.11.1
+  build_runner: ^2.8.0
+  flutter_bloc: ^9.1.1
+  flutter_platform_widgets: ^9.0.0
+  flutter_svg: ^2.2.1
+  sentry_flutter: ^9.6.0
+  flutter_dotenv: ^6.0.0
+  equatable: ^2.0.7
 
 dev_dependencies:
+  sentry_dart_plugin: ^3.1.1
   flutter_test:
     sdk: flutter
 
@@ -56,6 +70,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - .env
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -87,3 +104,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+sentry:
+  upload_debug_symbols: true
+  upload_source_maps: true
+  project: flutter
+  org: sudoku-idp
