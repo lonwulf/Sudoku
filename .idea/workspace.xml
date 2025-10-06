@@ -5,18 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="358d71e2-ecd7-49ac-9c13-03e8cdfe0ff6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/.env" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/lib/src/app/SudokuApp.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/lib/src/app/SudokuApp.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/lib/src/di/CoreModule.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/lib/src/di/CoreModule.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/lib/src/modules/game/data/source/GameAPIService.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/lib/src/modules/game/data/source/GameAPIService.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/lib/src/modules/game/data/source/SudokuRemoteDataSource.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/lib/src/modules/game/data/source/SudokuRemoteDataSource.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/lib/src/modules/home/presentation/components/NumberPadWidget.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/lib/src/modules/game/presentation/components/NumberPadWidget.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/lib/src/modules/home/presentation/screens/MainScreen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/lib/src/modules/game/presentation/screens/MainScreen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,23 +74,23 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Flutter.FlutterApp.executor": "Run",
-    "Gradle.Download Sources.executor": "Run",
-    "NotificationExplytEndpoints": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "feature/mobile-app-backbone",
-    "io.flutter.reload.alreadyRun": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/lonwulf/Videos",
-    "settings.editor.selected.configurable": "dart.settings",
-    "show.migrate.to.gradle.popup": "false"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Flutter.FlutterApp.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
+    &quot;NotificationExplytEndpoints&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/mobile-app-backbone&quot;,
+    &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/lonwulf/Videos&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;dart.settings&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/mobile/sudoku/lib/src/modules/game" />
