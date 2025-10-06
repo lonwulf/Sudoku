@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="358d71e2-ecd7-49ac-9c13-03e8cdfe0ff6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/pubspec.yaml" afterDir="false" />
-    </list>
+    <list default="true" id="358d71e2-ecd7-49ac-9c13-03e8cdfe0ff6" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -113,13 +107,6 @@
     </key>
   </component>
   <component name="RunManager" selected="Flutter.FlutterApp">
-    <configuration default="true" type="Spring Boot" factoryName="Spring Boot">
-      <module name="sudoku" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/backend" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration default="true" type="Application" factoryName="Application">
       <module name="sudoku" />
       <method v="2">
@@ -157,7 +144,15 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="Spring Boot" factoryName="Spring Boot">
+      <module name="sudoku" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/backend" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <list>
+      <item itemvalue="Explyt Spring.SudokuApplication" />
       <item itemvalue="Flutter.FlutterApp" />
     </list>
   </component>
