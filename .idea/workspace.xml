@@ -4,18 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="358d71e2-ecd7-49ac-9c13-03e8cdfe0ff6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/android/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/android/app/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/android/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/sudoku/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/pubspec.yaml" afterDir="false" />
-    </list>
+    <list default="true" id="358d71e2-ecd7-49ac-9c13-03e8cdfe0ff6" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
