@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="358d71e2-ecd7-49ac-9c13-03e8cdfe0ff6" name="Changes" comment="" />
+    <list default="true" id="358d71e2-ecd7-49ac-9c13-03e8cdfe0ff6" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/sudoku/.env" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/sudoku/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/sudoku/lib/src/app/SudokuApp.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/lib/src/app/SudokuApp.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/sudoku/lib/src/di/CoreModule.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/lib/src/di/CoreModule.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/sudoku/lib/src/modules/game/di/GameModule.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/sudoku/lib/src/modules/game/di/GameModule.dart" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

@@ -6,11 +6,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:sudoku/src/app/SudokuApp.dart';
 import 'package:sudoku/src/core/util/LoggerService.dart';
+import 'package:sudoku/src/di/CoreModule.dart';
+import 'package:sudoku/src/modules/game/di/GameModule.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  // throw StateError('This is test exception');
 
   try {
     await dotenv.load(fileName: ".env");
@@ -20,6 +21,8 @@ Future<void> main() async {
     debugPrint("❌ Failed to load .env: $e");
     throw StateError('This is test exception');
   }
+  await setupNetworkDependencies();
+  await setupGameModuleDependencies();
   // debugPrint("🚀 Starting app without Sentry");
   // runApp(const SudokuApp());
   runZonedGuarded(
