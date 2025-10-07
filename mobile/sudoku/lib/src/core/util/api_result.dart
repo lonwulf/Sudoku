@@ -1,4 +1,4 @@
-import 'APIStatus.dart';
+import 'api_status.dart';
 
 class APIResult<T> {
   final T? result;

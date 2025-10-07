@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'SudokuGameDTO.dart';
+part of 'sudoku_game_dto.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:sudoku/src/modules/game/data/response/SudokuGameDTO.dart';
+import 'package:sudoku/src/modules/game/data/response/sudoku_game_dto.dart';
 
 abstract class GameAPIService {
   Future<SudokuGameDTO> getSudokuChallenge();

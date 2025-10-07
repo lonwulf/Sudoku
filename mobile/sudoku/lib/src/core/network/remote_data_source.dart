@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 
-import '../util/APIResult.dart';
+import '../util/api_result.dart';
 
 abstract class RemoteDataSource {
   Future<APIResult<T>> safeApiCall<T>(Future<T> Function() apiCall) async {

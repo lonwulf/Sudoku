@@ -1,9 +1,9 @@
-import 'package:sudoku/src/core/util/APIResult.dart';
-import 'package:sudoku/src/core/util/APIStatus.dart';
-import 'package:sudoku/src/modules/game/data/source/SudokuRemoteDataSource.dart';
-import 'package:sudoku/src/modules/game/domain/mapper/SudokuPuzzleMapper.dart';
-import 'package:sudoku/src/modules/game/domain/model/SudokuGameModel.dart';
-import 'package:sudoku/src/modules/game/domain/repository/MainRepository.dart';
+import 'package:sudoku/src/core/util/api_result.dart';
+import 'package:sudoku/src/core/util/api_status.dart';
+import 'package:sudoku/src/modules/game/data/source/sudoku_remote_data_source.dart';
+import 'package:sudoku/src/modules/game/domain/mapper/sudoku_puzzle_mapper.dart';
+import 'package:sudoku/src/modules/game/domain/model/sudoku_game_model.dart';
+import 'package:sudoku/src/modules/game/domain/repository/main_repository.dart';
 
 class MainRepositoryImpl extends MainRepository {
   final SudokuRemoteDataSource remoteDataSource;

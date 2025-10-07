@@ -4,10 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:sudoku/src/app/SudokuApp.dart';
-import 'package:sudoku/src/core/util/LoggerService.dart';
-import 'package:sudoku/src/di/CoreModule.dart';
-import 'package:sudoku/src/modules/game/di/GameModule.dart';
+import 'package:sudoku/src/app/sudoku_app.dart';
+import 'package:sudoku/src/core/util/logger_service.dart';
+import 'package:sudoku/src/di/core_module.dart';
+import 'package:sudoku/src/modules/game/di/game_module.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

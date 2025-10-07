@@ -1,7 +1,7 @@
-import 'package:sudoku/src/core/util/APIStatus.dart';
-import 'package:sudoku/src/core/util/GenericUseCaseResult.dart';
-import 'package:sudoku/src/modules/game/domain/model/SudokuGameModel.dart';
-import 'package:sudoku/src/modules/game/domain/repository/MainRepository.dart';
+import 'package:sudoku/src/core/util/api_status.dart';
+import 'package:sudoku/src/core/util/generic_use_case_result.dart';
+import 'package:sudoku/src/modules/game/domain/model/sudoku_game_model.dart';
+import 'package:sudoku/src/modules/game/domain/repository/main_repository.dart';
 
 class MainUseCase {
   final MainRepository repository;
