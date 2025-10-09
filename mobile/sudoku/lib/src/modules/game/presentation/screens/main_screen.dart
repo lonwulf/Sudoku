@@ -15,6 +15,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int? selectedCell;
+  late List<List<bool>> editableCells = [];
 
   //todo delete this
   List<List<int?>> board = [
@@ -74,12 +75,17 @@ class _MainScreenState extends State<MainScreen> {
             } else if (state is Error<SudokuGameModel>) {
               return Center(
                 child: Text(
-                  state.toString(),//todo fix to `state.msg`
+                  state.toString(), //todo fix to `state.msg`
                   style: const TextStyle(color: Colors.red, fontSize: 16),
                 ),
               );
             } else if (state is Success<SudokuGameModel>) {
               final model = state.value;
+              if (editableCells.isEmpty) {
+                editableCells = model!.puzzle
+                    .map((row) => row.map((cell) => cell == 0).toList())
+                    .toList();
+              }
               return buildContent(model!);
             }
             return const SizedBox.shrink();
@@ -99,7 +105,7 @@ class _MainScreenState extends State<MainScreen> {
         const Spacer(),
         buildNumberPad(model),
         const SizedBox(height: 20),
-        buildBottomActions(context),
+        buildBottomActions(context, model),
         const SizedBox(height: 20),
       ],
     );
@@ -133,7 +139,8 @@ class _MainScreenState extends State<MainScreen> {
               bool isSelected = selectedCell == cellIndex;
               final cells = model.puzzle[row][col];
               bool isHighlighted = model.puzzle[row][col] == 9;
-              bool isError = model.puzzle[row][col] == 9 && row == 4 && col == 3;
+
+              bool isEditable = editableCells[row][col];
 
               return GestureDetector(
                 onTap: () {
@@ -149,26 +156,24 @@ class _MainScreenState extends State<MainScreen> {
                     bottom: (row + 1) % 3 == 0 && row != 8 ? 4 : 1,
                   ),
                   decoration: BoxDecoration(
-                    color: isError
-                        ? const Color(0xFF8B4B68)
-                        : isSelected
-                        ? const Color(0xFF4169E1)
-                        : isHighlighted
-                        ? const Color(0xFF4B5B8B)
-                        : const Color(0xFF2C3E5A),
+                    color: isSelected
+                        ? const Color(0xFF4169E1) // Selected cell
+                        : !isEditable
+                        ? const Color(0xFF25324B) // Original fixed cell color
+                        : const Color(0xFF2C3E5A), // Editable cell color,
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Center(
-                    child: cells != null
-                        ? Text(
-                            '$cells',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          )
-                        : null,
+                    child: Text(
+                      cells == 0 ? '' : '$cells',
+                      style: TextStyle(
+                        color: isEditable ? Colors.white : Colors.white70,
+                        fontSize: 18,
+                        fontWeight: isEditable
+                            ? FontWeight.w500
+                            : FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               );
@@ -179,7 +184,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget buildBottomActions(BuildContext context) {
+  Widget buildBottomActions(BuildContext context, SudokuGameModel model) {
     final bool isAndroid = isMaterial(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -201,30 +206,41 @@ class _MainScreenState extends State<MainScreen> {
           buildActionButton(
             isAndroid ? Icons.delete_outline : CupertinoIcons.delete,
             'Erase',
+            onTap: () => eraseSelectedCell(model),
+            onLongPress: () => eraseAllEditableCells(model),
           ),
         ],
       ),
     );
   }
 
-  Widget buildActionButton(IconData icon, String label) {
-    return Column(
-      children: [
-        Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: const Color(0xFF1E2940),
-            borderRadius: BorderRadius.circular(12),
+  Widget buildActionButton(
+    IconData icon,
+    String label, {
+    VoidCallback? onTap,
+    VoidCallback? onLongPress,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      onLongPress: onLongPress,
+      child: Column(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E2940),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: Colors.white70, size: 24),
           ),
-          child: Icon(icon, color: Colors.white70, size: 24),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: const TextStyle(color: Colors.white54, fontSize: 12),
-        ),
-      ],
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white54, fontSize: 12),
+          ),
+        ],
+      ),
     );
   }
 
@@ -243,11 +259,14 @@ class _MainScreenState extends State<MainScreen> {
           return GestureDetector(
             onTap: () {
               if (selectedCell != null) {
-                setState(() {
-                  int row = selectedCell! ~/ 9;
-                  int column = selectedCell! % 9;
-                  model.puzzle[row][column] = number;
-                });
+                int row = selectedCell! ~/ 9;
+                int column = selectedCell! % 9;
+
+                if (editableCells[row][column]) {
+                  setState(() {
+                    model.puzzle[row][column] = number;
+                  });
+                }
               }
             },
             child: Container(
@@ -270,6 +289,30 @@ class _MainScreenState extends State<MainScreen> {
         }),
       ),
     );
+  }
+
+  void eraseSelectedCell(SudokuGameModel model) {
+    if (selectedCell != null) {
+      int row = selectedCell! ~/ 9;
+      int col = selectedCell! % 9;
+      if (editableCells[row][col]) {
+        setState(() {
+          model.puzzle[row][col] = 0;
+        });
+      }
+    }
+  }
+
+  void eraseAllEditableCells(SudokuGameModel model) {
+    setState(() {
+      for (int row = 0; row < 9; row++) {
+        for (int col = 0; col < 9; col++) {
+          if (editableCells[row][col]) {
+            model.puzzle[row][col] = 0;
+          }
+        }
+      }
+    });
   }
 }
 
