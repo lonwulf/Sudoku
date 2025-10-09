@@ -47,3 +47,7 @@ app.*.map.json
 sentry.properties
 
 sentry-wizard
+
+.env
+
+mobile/sudoku/.gitignore
