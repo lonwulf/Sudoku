@@ -15,17 +15,24 @@ public class AuthUtil {
         this.userRepository = userRepository;
     }
 
+    // Principals are JWTs, except for the dev profile's basic-auth users
     private String getUserId(Authentication authentication){
-        Jwt jwt = (Jwt) authentication.getPrincipal();
-        return jwt.getClaimAsString("sub"); //google userId
+        if (authentication.getPrincipal() instanceof Jwt jwt) {
+            return jwt.getClaimAsString("sub"); //google userId
+        }
+        return authentication.getName();
     }
 
     private String getEmail(Authentication authentication){
-        Jwt jwt = (Jwt) authentication.getPrincipal();
-        return jwt.getClaimAsString("email");
+        if (authentication.getPrincipal() instanceof Jwt jwt) {
+            return jwt.getClaimAsString("email");
+        }
+        return null;
     }
     private String getDisplayName(Authentication authentication){
-        Jwt jwt = (Jwt) authentication.getPrincipal();
+        if (!(authentication.getPrincipal() instanceof Jwt jwt)) {
+            return authentication.getName();
+        }
         // google might put "name" or "given_name"/"family_name"
         String name = jwt.getClaimAsString("name");
         if (name == null) name = jwt.getClaimAsString("given_name");

@@ -1,7 +1,6 @@
 package com.lonwulf.sudoku.service;
 
 import com.lonwulf.sudoku.constants.Constants;
-import com.lonwulf.sudoku.data.dto.CompletionResponseDTO;
 import com.lonwulf.sudoku.data.dto.LeaderboardEntryDTO;
 import com.lonwulf.sudoku.data.dto.LeaderboardResponseDTO;
 import com.lonwulf.sudoku.data.dto.ScoreResponseDTO;
@@ -71,47 +70,33 @@ public class ScoreService {
         return user.isShadowBanned() ? Constants.SHADOW_LEADERBOARD : Constants.GLOBAL_LEADERBOARD;
     }
 
+    // Points are decided here, never by the client
+    public static int pointsForDifficulty(String difficulty) {
+        return switch (difficulty) {
+            case "easy" -> 10;
+            case "hard" -> 30;
+            default -> 20; //medium
+        };
+    }
+
     @Transactional
-    public CompletionResponseDTO recordCompletion(User user) {
+    public ScoreResponseDTO recordCompletion(User user, int pointsEarned) {
         user.incrementPuzzlesCompleted();
+        user.addScore(pointsEarned);
         userRepo.save(user);
 
         // Upsert UserScore entity
-        UserScore score = userScoreRepo.findByUserId(user.getId())
-                .orElseGet(() -> new UserScore(user.getId()));
-        score.increment();
-        userScoreRepo.save(score);
-
-        // Update Redis leaderboard
-        redisTemplate.opsForZSet().incrementScore(getLeaderboardKey(user), user.getId(), 1);
-
-        return new CompletionResponseDTO(user.getId(), score.getPuzzlesCompleted());
-    }
-
-
-    public int getCompletedCount(String userId) {
-        return userScoreRepo.findByUserId(userId)
-                .map(UserScore::getPuzzlesCompleted)
-                .orElse(0);
-    }
-
-    @Transactional
-    public ScoreResponseDTO submitScore(User user, int pointsEarned, boolean completed) {
-        // Update Redis leaderboard
-        redisTemplate.opsForZSet().incrementScore(getLeaderboardKey(user), user.getId(), pointsEarned);
-
-        // Update SQL score
         UserScore userScore = userScoreRepo.findByUserId(user.getId())
-                .orElse(new UserScore(user.getId()));
+                .orElseGet(() -> new UserScore(user.getId()));
+        userScore.increment();
         userScore.setTotalPoints(userScore.getTotalPoints() + pointsEarned);
-
-        if (completed) user.incrementPuzzlesCompleted();
         userScore.setLastUpdated(LocalDateTime.now());
         userScoreRepo.save(userScore);
 
-        // Get updated rank + score
-        Long rank = redisTemplate.opsForZSet().reverseRank(getLeaderboardKey(user), user.getId());
-        Double totalScore = redisTemplate.opsForZSet().score(getLeaderboardKey(user), user.getId());
+        // Update Redis leaderboard, then read back rank
+        String leaderboardKey = getLeaderboardKey(user);
+        Double totalScore = redisTemplate.opsForZSet().incrementScore(leaderboardKey, user.getId(), pointsEarned);
+        Long rank = redisTemplate.opsForZSet().reverseRank(leaderboardKey, user.getId());
 
         return new ScoreResponseDTO(
                 user.getId(),
@@ -120,6 +105,12 @@ public class ScoreService {
                 totalScore != null ? totalScore.intValue() : 0,
                 rank != null ? rank + 1 : null
         );
+    }
+
+    public int getCompletedCount(String userId) {
+        return userScoreRepo.findByUserId(userId)
+                .map(UserScore::getPuzzlesCompleted)
+                .orElse(0);
     }
 
     private boolean isRedisPopulated(String leaderboardKey) {
