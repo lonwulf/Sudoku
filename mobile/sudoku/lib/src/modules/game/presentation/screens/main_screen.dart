@@ -5,6 +5,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:sudoku/src/core/util/generic_result_state.dart';
 import 'package:sudoku/src/modules/game/domain/model/sudoku_game_model.dart';
 import 'package:sudoku/src/modules/game/presentation/bloc/main_bloc.dart';
+import 'package:sudoku/src/modules/game/presentation/components/game_timer.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -15,19 +16,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int? selectedCell;
-
-  //todo delete this
-  List<List<int?>> board = [
-    [null, null, null, null, null, null, null, null, null],
-    [null, null, null, null, 9, null, null, null, null],
-    [null, null, null, null, null, null, null, 9, null],
-    [null, null, 9, null, null, null, 9, null, null],
-    [null, 4, null, 9, null, null, null, null, null],
-    [null, null, null, null, null, 4, null, null, null],
-    [null, 6, null, null, null, null, null, null, null],
-    [null, null, null, null, 8, null, null, null, null],
-    [null, null, null, null, 9, null, null, null, null],
-  ];
 
   @override
   void initState() {
@@ -41,10 +29,16 @@ class _MainScreenState extends State<MainScreen> {
       backgroundColor: const Color(0xFF2C3E5A),
       appBar: PlatformAppBar(
         backgroundColor: const Color(0xFF2C3E5A),
-        title: PlatformText(
-          'Medium',
-          style: const TextStyle(color: Color(0xFFFFFFFE), fontSize: 16),
-        ),
+        title:
+            BlocSelector<MainBloc, GenericResultState<SudokuGameModel>, String>(
+              selector: (state) => state is Success<SudokuGameModel>
+                  ? state.value?.difficulty ?? ''
+                  : '',
+              builder: (context, difficulty) => PlatformText(
+                _capitalize(difficulty),
+                style: const TextStyle(color: Color(0xFFFFFFFE), fontSize: 16),
+              ),
+            ),
         trailingActions: [
           PlatformIconButton(
             icon: const Icon(Icons.pause, color: Color(0xFFFFFFFE)),
@@ -103,11 +97,18 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
+  /// Value in the selected cell, or 0 when nothing (or an empty cell) is
+  /// selected. Cells and keys with the same digit are highlighted.
+  int selectedValue(SudokuGameModel model) {
+    final cell = selectedCell;
+    return cell == null ? 0 : model.board[cell ~/ 9][cell % 9];
+  }
+
   Widget buildContent(SudokuGameModel model) {
     return Column(
       children: [
         const SizedBox(height: 20),
-        buildTimer(),
+        buildTimer(model),
         const SizedBox(height: 30),
         Flexible(child: Center(child: buildSudokuGrid(model))),
         const SizedBox(height: 20),
@@ -119,10 +120,10 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget buildTimer() {
-    return const Text(
-      '16:02',
-      style: TextStyle(
+  Widget buildTimer(SudokuGameModel model) {
+    return GameTimer(
+      key: ValueKey(model.id),
+      style: const TextStyle(
         color: Colors.white,
         fontSize: 48,
         fontWeight: FontWeight.w300,
@@ -152,9 +153,14 @@ class _MainScreenState extends State<MainScreen> {
                     bool isSelected = selectedCell == cellIndex;
                     final cells = model.board[row][col];
                     final isGiven = model.isGiven(row, col);
-                    bool isHighlighted = model.puzzle[row][col] == 9;
+                    bool isHighlighted =
+                        !isSelected &&
+                        cells != 0 &&
+                        cells == selectedValue(model);
                     bool isError =
-                        model.puzzle[row][col] == 9 && row == 4 && col == 3;
+                        !isGiven &&
+                        cells != 0 &&
+                        cells != model.solution[row][col];
 
                     return Expanded(
                       child: GestureDetector(
@@ -288,7 +294,7 @@ class _MainScreenState extends State<MainScreen> {
                 child: Container(
                   height: 48,
                   decoration: BoxDecoration(
-                    color: number == 4
+                    color: number == selectedValue(model)
                         ? const Color(0xFF4ECDC4)
                         : const Color(0xFF2C3E5A),
                     borderRadius: BorderRadius.circular(8),
@@ -309,11 +315,5 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-// extension PlatformIconExtension on BuildContext {
-//   IconData platformIcon({
-//     required IconData material,
-//     required IconData cupertino,
-//   }) {
-//     return isMaterial(this) ? material : cupertino;
-//   }
-// }
+String _capitalize(String text) =>
+    text.isEmpty ? text : text[0].toUpperCase() + text.substring(1);

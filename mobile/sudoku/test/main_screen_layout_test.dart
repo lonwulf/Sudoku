@@ -20,6 +20,23 @@ class _FakeUseCase implements MainUseCase {
 }
 
 void main() {
+  testWidgets('shows the puzzle difficulty and a running timer', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: BlocProvider(
+          create: (_) => MainBloc(_FakeUseCase()),
+          child: const MainScreen(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Medium'), findsOneWidget);
+    expect(find.text('00:00'), findsOneWidget);
+  });
+
   for (final size in const [Size(320, 568), Size(360, 640), Size(412, 915)]) {
     testWidgets('main screen fits a ${size.width}x${size.height} screen', (
       tester,
