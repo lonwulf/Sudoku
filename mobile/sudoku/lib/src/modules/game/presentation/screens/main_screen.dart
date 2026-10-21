@@ -45,10 +45,6 @@ class _MainScreenState extends State<MainScreen> {
           'Medium',
           style: const TextStyle(color: Color(0xFFFFFFFE), fontSize: 16),
         ),
-        leading: PlatformIconButton(
-          icon: Icon(PlatformIcons(context).back, color: Color(0xFFFFFFFE)),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
         trailingActions: [
           PlatformIconButton(
             icon: const Icon(Icons.pause, color: Color(0xFFFFFFFE)),
