@@ -100,6 +100,8 @@ class ScoreServiceTest {
     @Test
     void emptyBoardStartsAnAsyncRebuild() {
         when(zSet.size(Constants.GLOBAL_LEADERBOARD)).thenReturn(0L);
+        // players have scored, so the board was lost from Redis
+        when(userRepo.existsByShadowBannedAndLifetimeScoreGreaterThan(false, 0)).thenReturn(true);
 
         LeaderboardResponseDTO response = scoreService.getLeaderboardData(new User("me"), 0, 10, 2);
 
@@ -133,6 +135,19 @@ class ScoreServiceTest {
 
         assertEquals(70, standing.leaderboardScore());
         assertNull(standing.rank());
+    }
+
+    @Test
+    void emptyBoardWithNobodyScoredIsReadyAndEmpty() {
+        when(zSet.size(Constants.GLOBAL_LEADERBOARD)).thenReturn(0L);
+        when(userRepo.existsByShadowBannedAndLifetimeScoreGreaterThan(false, 0)).thenReturn(false);
+
+        LeaderboardResponseDTO response = scoreService.getLeaderboardData(new User("me"), 0, 10, 2);
+
+        assertEquals("ready", response.state());
+        assertEquals(List.of(), response.global());
+        assertNull(response.me());
+        verify(rebuildService, never()).rebuildAsync(any());
     }
 
     private void stubPipeline(long rank, double score) {

@@ -19,6 +19,7 @@ import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -52,21 +53,33 @@ class LeaderboardRebuildServiceTest {
         User honest = new User("honest");
         honest.setLifetimeScore(50);
         Pageable first = firstPage();
-        when(userRepo.findByShadowBanned(false, first)).thenReturn(new SliceImpl<>(List.of(honest), first, false));
+        when(userRepo.findByShadowBannedAndLifetimeScoreGreaterThan(false, 0, first)).thenReturn(new SliceImpl<>(List.of(honest), first, false));
 
         rebuildService.rebuildAsync(Constants.GLOBAL_LEADERBOARD);
 
-        verify(userRepo, never()).findByShadowBanned(eq(true), any());
+        verify(userRepo, never()).findByShadowBannedAndLifetimeScoreGreaterThan(eq(true), anyInt(), any());
         verify(zSet).addIfAbsent(Constants.GLOBAL_LEADERBOARD, Set.of(ZSetOperations.TypedTuple.of("honest", 50.0)));
         verify(redisTemplate).delete(Constants.GLOBAL_LEADERBOARD + ":rebuild-lock");
+    }
+
+    @Test
+    void rebuildOnlyAsksForPlayersWithPoints() {
+        Pageable first = firstPage();
+        when(userRepo.findByShadowBannedAndLifetimeScoreGreaterThan(false, 0, first))
+                .thenReturn(new SliceImpl<>(List.of(), first, false));
+
+        rebuildService.rebuildAsync(Constants.GLOBAL_LEADERBOARD);
+
+        verify(userRepo).findByShadowBannedAndLifetimeScoreGreaterThan(false, 0, first);
+        verify(zSet, never()).addIfAbsent(any(), anySet());
     }
 
     @Test
     void rebuildWalksEveryPage() {
         Pageable first = firstPage();
         Pageable second = first.next();
-        when(userRepo.findByShadowBanned(false, first)).thenReturn(new SliceImpl<>(List.of(new User("a")), first, true));
-        when(userRepo.findByShadowBanned(false, second)).thenReturn(new SliceImpl<>(List.of(new User("b")), second, false));
+        when(userRepo.findByShadowBannedAndLifetimeScoreGreaterThan(false, 0, first)).thenReturn(new SliceImpl<>(List.of(new User("a")), first, true));
+        when(userRepo.findByShadowBannedAndLifetimeScoreGreaterThan(false, 0, second)).thenReturn(new SliceImpl<>(List.of(new User("b")), second, false));
 
         rebuildService.rebuildAsync(Constants.GLOBAL_LEADERBOARD);
 
@@ -77,7 +90,7 @@ class LeaderboardRebuildServiceTest {
     @Test
     void rebuildSkipsRedisWhenThereIsNobodyToAdd() {
         Pageable first = firstPage();
-        when(userRepo.findByShadowBanned(true, first)).thenReturn(new SliceImpl<>(List.of(), first, false));
+        when(userRepo.findByShadowBannedAndLifetimeScoreGreaterThan(true, 0, first)).thenReturn(new SliceImpl<>(List.of(), first, false));
 
         rebuildService.rebuildAsync(Constants.SHADOW_LEADERBOARD);
 
@@ -90,7 +103,7 @@ class LeaderboardRebuildServiceTest {
 
         rebuildService.rebuildAsync(Constants.GLOBAL_LEADERBOARD);
 
-        verify(userRepo, never()).findByShadowBanned(anyBoolean(), any());
+        verify(userRepo, never()).findByShadowBannedAndLifetimeScoreGreaterThan(anyBoolean(), anyInt(), any());
         verify(redisTemplate, never()).delete(anyString());
     }
 

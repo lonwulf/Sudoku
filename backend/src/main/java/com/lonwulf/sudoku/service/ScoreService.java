@@ -103,6 +103,11 @@ public class ScoreService {
         );
     }
 
+    // An empty board is either new or lost from Redis; only the database can tell which
+    private boolean anyoneHasScored(User user) {
+        return userRepo.existsByShadowBannedAndLifetimeScoreGreaterThan(user.isShadowBanned(), 0);
+    }
+
     private boolean isRedisPopulated(String leaderboardKey) {
         Long size = redisTemplate.opsForZSet().size(leaderboardKey);
         return size != null && size > 0;
@@ -122,6 +127,11 @@ public class ScoreService {
         String leaderboardKey = getLeaderboardKey(user);
 
         boolean redisReady = isRedisPopulated(leaderboardKey);
+        if (!redisReady && !anyoneHasScored(user)) {
+            // nothing to rebuild: the board is genuinely empty
+            retryTracker.remove(user.getId());
+            return LeaderboardResponseDTO.ready(List.of(), null, List.of());
+        }
         if (!redisReady){
             int retryAfter = computeRetryAfter(user.getId());
             rebuildService.rebuildAsync(leaderboardKey);
