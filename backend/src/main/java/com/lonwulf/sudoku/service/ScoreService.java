@@ -5,9 +5,7 @@ import com.lonwulf.sudoku.data.dto.LeaderboardEntryDTO;
 import com.lonwulf.sudoku.data.dto.LeaderboardResponseDTO;
 import com.lonwulf.sudoku.data.dto.ScoreResponseDTO;
 import com.lonwulf.sudoku.data.entity.User;
-import com.lonwulf.sudoku.data.entity.UserScore;
 import com.lonwulf.sudoku.data.repository.IUserRepository;
-import com.lonwulf.sudoku.data.repository.IUserScoreRepository;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -15,10 +13,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,16 +24,13 @@ import java.util.stream.Collectors;
 @Service
 public class ScoreService {
     private final StringRedisTemplate redisTemplate;
-    private final IUserScoreRepository userScoreRepo;
     private final IUserRepository userRepo;
 
     private final Map<String, Boolean> rebuildInProgress = new ConcurrentHashMap<>();
     private final Map<String, Integer> retryTracker = new ConcurrentHashMap<>();
 
-    public ScoreService(IUserScoreRepository userScoreRepo,
-                        IUserRepository userRepo,
+    public ScoreService(IUserRepository userRepo,
                         StringRedisTemplate redisTemplate) {
-        this.userScoreRepo = userScoreRepo;
         this.userRepo = userRepo;
         this.redisTemplate = redisTemplate;
     }
@@ -53,10 +46,13 @@ public class ScoreService {
     @Async
     public void rebuildLeaderboard(String leaderboardKey){
         try{
-           List<UserScore> allScores = userScoreRepo.findAll();
-           for (UserScore score : allScores){
-               redisTemplate.opsForZSet()
-                       .add(leaderboardKey, score.getUserId(), score.getTotalPoints());
+           // shadow-banned users only ever belong on the shadow board
+           boolean shadowBanned = Constants.SHADOW_LEADERBOARD.equals(leaderboardKey);
+           Set<ZSetOperations.TypedTuple<String>> entries = userRepo.findByShadowBanned(shadowBanned).stream()
+                   .map(u -> ZSetOperations.TypedTuple.of(u.getId(), (double) u.getLifetimeScore()))
+                   .collect(Collectors.toSet());
+           if (!entries.isEmpty()) {
+               redisTemplate.opsForZSet().add(leaderboardKey, entries); // single ZADD
            }
            System.out.println("Leaderboard rebuild complete");
         } catch (Exception e) {
@@ -85,14 +81,6 @@ public class ScoreService {
         user.addScore(pointsEarned);
         userRepo.save(user);
 
-        // Upsert UserScore entity
-        UserScore userScore = userScoreRepo.findByUserId(user.getId())
-                .orElseGet(() -> new UserScore(user.getId()));
-        userScore.increment();
-        userScore.setTotalPoints(userScore.getTotalPoints() + pointsEarned);
-        userScore.setLastUpdated(LocalDateTime.now());
-        userScoreRepo.save(userScore);
-
         // Update Redis leaderboard, then read back rank
         String leaderboardKey = getLeaderboardKey(user);
         Double totalScore = redisTemplate.opsForZSet().incrementScore(leaderboardKey, user.getId(), pointsEarned);
@@ -105,12 +93,6 @@ public class ScoreService {
                 totalScore != null ? totalScore.intValue() : 0,
                 rank != null ? rank + 1 : null
         );
-    }
-
-    public int getCompletedCount(String userId) {
-        return userScoreRepo.findByUserId(userId)
-                .map(UserScore::getPuzzlesCompleted)
-                .orElse(0);
     }
 
     private boolean isRedisPopulated(String leaderboardKey) {
@@ -129,24 +111,23 @@ public class ScoreService {
     public LeaderboardResponseDTO getLeaderboardData(User user, int page, int size, int window) {
         Long start = (long) page * size;
         Long end = start + size - 1;
-        int nearbyFetch = window * 2 + 1;
+        String leaderboardKey = getLeaderboardKey(user);
 
-        boolean redisReady = isRedisPopulated(getLeaderboardKey(user));
+        boolean redisReady = isRedisPopulated(leaderboardKey);
         if (!redisReady){
             int retryAfter = computeRetryAfter(user.getId());
-            triggerAsyncRebuild(getLeaderboardKey(user));
+            triggerAsyncRebuild(leaderboardKey);
             return LeaderboardResponseDTO.initializing(retryAfter);
         }
 
         List<Object> pipelineResults = redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
 
-            byte[] key = redisTemplate.getStringSerializer().serialize(getLeaderboardKey(user));
+            byte[] key = redisTemplate.getStringSerializer().serialize(leaderboardKey);
             byte[] userKey = redisTemplate.getStringSerializer().serialize(user.getId());
 
             connection.zRevRangeWithScores(key, start, end); // global
             connection.zRevRank(key, userKey);               // rank
             connection.zScore(key, userKey);                 // score
-            connection.zRevRangeWithScores(key, 0, start + size + nearbyFetch); // nearby slice
 
             return null;
         });
@@ -157,17 +138,15 @@ public class ScoreService {
         Long myRanking = (Long) pipelineResults.get(1);
         Double myScore = (Double) pipelineResults.get(2);
 
-        Set<ZSetOperations.TypedTuple<String>> bigSlice =
-                (Set<ZSetOperations.TypedTuple<String>>) pipelineResults.get(3);
-
         if (myRanking == null || myScore == null) {
             return LeaderboardResponseDTO.initializing(computeRetryAfter(user.getId()));
         }
 
+        // players around my own rank, wherever that is on the board
         long from = Math.max(0, myRanking - window);
-        long to = Math.min(bigSlice.size() - 1, myRanking + window);
-        List<ZSetOperations.TypedTuple<String>> nearbyData =
-                new ArrayList<>(bigSlice).subList((int) from, (int) (to + 1));
+        Set<ZSetOperations.TypedTuple<String>> nearbyData =
+                redisTemplate.opsForZSet().reverseRangeWithScores(leaderboardKey, from, myRanking + window);
+        if (nearbyData == null) nearbyData = Set.of();
 
         // Collect user info
         Set<String> allIds = new HashSet<>();
@@ -185,7 +164,7 @@ public class ScoreService {
                 user.getDisplayName(),
                 myScore.intValue()
         );
-        List<LeaderboardEntryDTO> nearby = mapLeaderboard(new LinkedHashSet<>(nearbyData), users, from);
+        List<LeaderboardEntryDTO> nearby = mapLeaderboard(nearbyData, users, from);
 
         return LeaderboardResponseDTO.ready(global, me, nearby);
     }
