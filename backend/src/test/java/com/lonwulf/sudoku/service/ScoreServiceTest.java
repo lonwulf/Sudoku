@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -42,7 +44,8 @@ class ScoreServiceTest {
         when(zSet.size(Constants.GLOBAL_LEADERBOARD)).thenReturn(1000L);
         when(userRepo.findAllById(any())).thenReturn(List.of());
         rebuildService = mock(LeaderboardRebuildService.class);
-        scoreService = new ScoreService(userRepo, redisTemplate, rebuildService);
+        scoreService = new ScoreService(userRepo, redisTemplate, rebuildService,
+                new TransactionTemplate(mock(PlatformTransactionManager.class)));
     }
 
     @Test

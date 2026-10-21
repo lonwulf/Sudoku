@@ -6,11 +6,14 @@ import com.lonwulf.sudoku.data.dto.LeaderboardResponseDTO;
 import com.lonwulf.sudoku.data.dto.ScoreResponseDTO;
 import com.lonwulf.sudoku.data.entity.User;
 import com.lonwulf.sudoku.data.repository.IUserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,19 +25,24 @@ import java.util.stream.Collectors;
 
 @Service
 public class ScoreService {
+    private static final Logger log = LoggerFactory.getLogger(ScoreService.class);
+
     private final StringRedisTemplate redisTemplate;
     private final IUserRepository userRepo;
     private final LeaderboardRebuildService rebuildService;
+    private final TransactionTemplate transactionTemplate;
 
     // per-user backoff while a board is being rebuilt; cleared once they get a ready response
     private final Map<String, Integer> retryTracker = new ConcurrentHashMap<>();
 
     public ScoreService(IUserRepository userRepo,
                         StringRedisTemplate redisTemplate,
-                        LeaderboardRebuildService rebuildService) {
+                        LeaderboardRebuildService rebuildService,
+                        TransactionTemplate transactionTemplate) {
         this.userRepo = userRepo;
         this.redisTemplate = redisTemplate;
         this.rebuildService = rebuildService;
+        this.transactionTemplate = transactionTemplate;
     }
 
     private String getLeaderboardKey(User user) {
@@ -50,22 +58,29 @@ public class ScoreService {
         };
     }
 
-    @Transactional
     public ScoreResponseDTO recordCompletion(User user, int pointsEarned) {
-        user.incrementPuzzlesCompleted();
-        user.addScore(pointsEarned);
-        userRepo.save(user);
+        // Commit the points first and only then touch Redis: a Redis failure can leave the board
+        // behind the database (the source of truth), but never holding points the database lacks
+        User updated = transactionTemplate.execute(status -> {
+            userRepo.addCompletion(user.getId(), pointsEarned);
+            return userRepo.findById(user.getId()).orElseThrow();
+        });
 
-        // Update Redis leaderboard, then read back rank
-        String leaderboardKey = getLeaderboardKey(user);
-        Double totalScore = redisTemplate.opsForZSet().incrementScore(leaderboardKey, user.getId(), pointsEarned);
-        Long rank = redisTemplate.opsForZSet().reverseRank(leaderboardKey, user.getId());
+        String leaderboardKey = getLeaderboardKey(updated);
+        Double totalScore = null;
+        Long rank = null;
+        try {
+            totalScore = redisTemplate.opsForZSet().incrementScore(leaderboardKey, updated.getId(), pointsEarned);
+            rank = redisTemplate.opsForZSet().reverseRank(leaderboardKey, updated.getId());
+        } catch (DataAccessException e) {
+            log.error("Leaderboard update failed for {}; points are saved but the board lags", updated.getId(), e);
+        }
 
         return new ScoreResponseDTO(
-                user.getId(),
-                user.getDisplayName(),
-                user.getPuzzlesCompleted(),
-                totalScore != null ? totalScore.intValue() : 0,
+                updated.getId(),
+                updated.getDisplayName(),
+                updated.getPuzzlesCompleted(),
+                totalScore != null ? totalScore.intValue() : updated.getLifetimeScore(),
                 rank != null ? rank + 1 : null
         );
     }

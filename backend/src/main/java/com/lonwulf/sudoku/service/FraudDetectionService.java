@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.LocalDateTime;
 
@@ -55,10 +57,28 @@ public class FraudDetectionService {
         audit(userId, LeaderboardAuditLog.ActionType.MOVED_TO_GLOBAL, reason, triggeredBy);
     }
 
-    // the database score is the source of truth, so this works even if the user was never on the source board
+    // The database score is the source of truth, so this works even if the user was never on the source board.
+    // Runs after commit so a rolled-back ban never moves the board.
     private void moveBetweenLeaderboards(User user, String from, String to) {
-        redisTemplate.opsForZSet().remove(from, user.getId());
-        redisTemplate.opsForZSet().add(to, user.getId(), user.getLifetimeScore());
+        String userId = user.getId();
+        int score = user.getLifetimeScore();
+        afterCommit(() -> {
+            redisTemplate.opsForZSet().remove(from, userId);
+            redisTemplate.opsForZSet().add(to, userId, score);
+        });
+    }
+
+    private void afterCommit(Runnable action) {
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            action.run(); // no surrounding transaction (e.g. unit tests)
+            return;
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                action.run();
+            }
+        });
     }
 
     private void audit(String userId, LeaderboardAuditLog.ActionType action, String reason, String triggeredBy) {

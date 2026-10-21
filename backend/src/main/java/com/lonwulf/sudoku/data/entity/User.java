@@ -37,14 +37,6 @@ public class User implements Persistable<String> {
         this.id = id;
         this.newUser = true;
     }
-    public void incrementPuzzlesCompleted() {
-        this.puzzlesCompleted++;
-    }
-
-    public void addScore(int score) {
-        this.lifetimeScore += score;
-    }
-
     @Override
     public boolean isNew() {
         return newUser;
