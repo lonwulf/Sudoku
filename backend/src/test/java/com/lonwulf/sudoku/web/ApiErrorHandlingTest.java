@@ -21,7 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+// Redis on a closed port: unreachableRedisIsServiceUnavailable must not find a dev Redis
+@SpringBootTest(properties = "spring.data.redis.port=1")
 @AutoConfigureMockMvc
 class ApiErrorHandlingTest {
     @Autowired
