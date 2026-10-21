@@ -5,3 +5,4 @@ mobile/sudoku/sentry-wizard
 .gradle/
 build/
 local.properties
+.idea/
