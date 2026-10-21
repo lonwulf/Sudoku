@@ -113,8 +113,8 @@ class _MainScreenState extends State<MainScreen> {
         const SizedBox(height: 20),
         buildTimer(),
         const SizedBox(height: 30),
-        buildSudokuGrid(model),
-        const Spacer(),
+        Flexible(child: Center(child: buildSudokuGrid(model))),
+        const SizedBox(height: 20),
         buildNumberPad(model),
         const SizedBox(height: 20),
         buildBottomActions(context),
@@ -134,65 +134,77 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
+  // Cells are sized from the available space so the board fits narrow and
+  // short screens instead of overflowing.
   Widget buildSudokuGrid(SudokuGameModel model) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E2940),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        children: List.generate(9, (row) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(9, (col) {
-              int cellIndex = row * 9 + col;
-              bool isSelected = selectedCell == cellIndex;
-              final cells = model.puzzle[row][col];
-              bool isHighlighted = model.puzzle[row][col] == 9;
-              bool isError = model.puzzle[row][col] == 9 && row == 4 && col == 3;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1E2940),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            children: List.generate(9, (row) {
+              return Expanded(
+                child: Row(
+                  children: List.generate(9, (col) {
+                    int cellIndex = row * 9 + col;
+                    bool isSelected = selectedCell == cellIndex;
+                    final cells = model.puzzle[row][col];
+                    bool isHighlighted = model.puzzle[row][col] == 9;
+                    bool isError =
+                        model.puzzle[row][col] == 9 && row == 4 && col == 3;
 
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedCell = cellIndex;
-                  });
-                },
-                child: Container(
-                  width: 36,
-                  height: 36,
-                  margin: EdgeInsets.only(
-                    right: (col + 1) % 3 == 0 && col != 8 ? 4 : 1,
-                    bottom: (row + 1) % 3 == 0 && row != 8 ? 4 : 1,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isError
-                        ? const Color(0xFF8B4B68)
-                        : isSelected
-                        ? const Color(0xFF4169E1)
-                        : isHighlighted
-                        ? const Color(0xFF4B5B8B)
-                        : const Color(0xFF2C3E5A),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Center(
-                    child: cells != 0
-                        ? Text(
-                            '$cells',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          )
-                        : null,
-                  ),
+                    return Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedCell = cellIndex;
+                          });
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            right: (col + 1) % 3 == 0 && col != 8 ? 4 : 1,
+                            bottom: (row + 1) % 3 == 0 && row != 8 ? 4 : 1,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isError
+                                ? const Color(0xFF8B4B68)
+                                : isSelected
+                                ? const Color(0xFF4169E1)
+                                : isHighlighted
+                                ? const Color(0xFF4B5B8B)
+                                : const Color(0xFF2C3E5A),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Center(
+                            child: cells != 0
+                                ? FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      '$cells',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  )
+                                : null,
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
                 ),
               );
             }),
-          );
-        }),
+          ),
+        ),
       ),
     );
   }
@@ -258,29 +270,33 @@ class _MainScreenState extends State<MainScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: List.generate(9, (index) {
           int number = index + 1;
-          return GestureDetector(
-            onTap: () {
-              if (selectedCell != null) {
-                setState(() {
-                  int row = selectedCell! ~/ 9;
-                  int column = selectedCell! % 9;
-                  model.puzzle[row][column] = number;
-                });
-              }
-            },
-            child: Container(
-              width: 34,
-              height: 48,
-              decoration: BoxDecoration(
-                color: number == 4
-                    ? const Color(0xFF4ECDC4)
-                    : const Color(0xFF2C3E5A),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Center(
-                child: Text(
-                  '$number',
-                  style: const TextStyle(fontWeight: FontWeight.w500),
+          return Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              child: GestureDetector(
+                onTap: () {
+                  if (selectedCell != null) {
+                    setState(() {
+                      int row = selectedCell! ~/ 9;
+                      int column = selectedCell! % 9;
+                      model.puzzle[row][column] = number;
+                    });
+                  }
+                },
+                child: Container(
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: number == 4
+                        ? const Color(0xFF4ECDC4)
+                        : const Color(0xFF2C3E5A),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '$number',
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  ),
                 ),
               ),
             ),
