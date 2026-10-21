@@ -4,6 +4,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:sudoku/src/modules/auth/presentation/components/account_button.dart';
 import 'package:sudoku/src/modules/game/domain/model/submit_outcome.dart';
 import 'package:sudoku/src/modules/game/presentation/bloc/submit_cubit.dart';
+import 'package:sudoku/src/modules/leaderboard/presentation/leaderboard_navigation.dart';
 import 'package:sudoku/src/theme/app_theme.dart';
 
 /// Replaces the number pad once the puzzle is solved: how the score was
@@ -50,12 +51,20 @@ class CompletionPanel extends StatelessWidget {
     switch (outcome) {
       case Scored(:final result):
         final rank = result.rank;
-        return _Status(
-          [
-            'Score ${result.score}',
-            if (rank != null) 'Rank #$rank',
-            '${result.puzzlesCompleted} solved',
-          ].join(' · '),
+        return Column(
+          children: [
+            _Status(
+              [
+                'Score ${result.score}',
+                if (rank != null) 'Rank #$rank',
+                '${result.puzzlesCompleted} solved',
+              ].join(' · '),
+            ),
+            PlatformTextButton(
+              onPressed: () => openLeaderboard(context),
+              child: const Text('Leaderboard'),
+            ),
+          ],
         );
       case SignInRequired():
         return Column(

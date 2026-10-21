@@ -3,10 +3,12 @@ package com.lonwulf.sudoku.service;
 import com.lonwulf.sudoku.constants.Constants;
 import com.lonwulf.sudoku.data.dto.LeaderboardEntryDTO;
 import com.lonwulf.sudoku.data.dto.LeaderboardResponseDTO;
+import com.lonwulf.sudoku.data.dto.ScoreResponseDTO;
 import com.lonwulf.sudoku.data.entity.User;
 import com.lonwulf.sudoku.data.repository.IUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -106,6 +108,33 @@ class ScoreServiceTest {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
+    void standingUsesTheDatabaseScoreAndTheBoardRank() {
+        User me = new User("me");
+        me.setLifetimeScore(70);
+        me.setPuzzlesCompleted(4);
+        when(zSet.reverseRank(Constants.GLOBAL_LEADERBOARD, "me")).thenReturn(2L);
+
+        ScoreResponseDTO standing = scoreService.getStanding(me);
+
+        assertEquals(70, standing.leaderboardScore());
+        assertEquals(4, standing.puzzlesCompleted());
+        assertEquals(3L, standing.rank());
+    }
+
+    @Test
+    void standingHasNoRankWhenTheBoardIsUnavailable() {
+        User me = new User("me");
+        me.setLifetimeScore(70);
+        when(zSet.reverseRank(Constants.GLOBAL_LEADERBOARD, "me"))
+                .thenThrow(new RedisConnectionFailureException("down"));
+
+        ScoreResponseDTO standing = scoreService.getStanding(me);
+
+        assertEquals(70, standing.leaderboardScore());
+        assertNull(standing.rank());
+    }
+
     private void stubPipeline(long rank, double score) {
         when(redisTemplate.executePipelined(any(RedisCallback.class)))
                 .thenReturn(List.of(tuples("top1", "top2"), rank, score));

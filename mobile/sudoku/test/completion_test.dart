@@ -1,5 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sudoku/src/core/util/api_result.dart';
+import 'package:sudoku/src/di/constant.dart';
+import 'package:sudoku/src/modules/leaderboard/domain/model/leaderboard_page.dart';
 import 'package:sudoku/src/modules/game/domain/model/difficulty.dart';
 
 import 'fixtures.dart';
@@ -94,7 +97,11 @@ void main() {
     expect(useCase.calls, 1);
   });
 
-  testWidgets('the account button signs in and out', (tester) async {
+  testWidgets('the account button signs in, then opens the score', (
+    tester,
+  ) async {
+    registerLeaderboard(FakeLeaderboardRepository());
+    addTearDown(getIt.reset);
     await tester.pumpWidget(testApp(auth: FakeAuthService()));
     await tester.pumpAndSettle();
 
@@ -104,9 +111,35 @@ void main() {
 
     await tester.tap(find.bySemanticsLabel('Signed in as Test Player'));
     await tester.pumpAndSettle();
+    expect(find.text('My score'), findsOneWidget);
+
+    // signing out returns to the game
     await tester.tap(find.text('Sign out'));
     await tester.pumpAndSettle();
+    expect(find.text('My score'), findsNothing);
     expect(find.bySemanticsLabel('Sign in'), findsOneWidget);
+  });
+
+  testWidgets('the leaderboard opens from a scored puzzle', (tester) async {
+    registerLeaderboard(
+      FakeLeaderboardRepository(
+        pages: {0: APIResult.success(LeaderboardPage(top: testEntries(1, 3)))},
+      ),
+    );
+    addTearDown(getIt.reset);
+    await tester.pumpWidget(
+      testApp(
+        bloc: testBloc(useCase: FakeUseCase(game: nearlySolvedGame)),
+        auth: FakeAuthService(user: testUser),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await solve(tester);
+
+    await tester.tap(find.text('Leaderboard'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Player 1'), findsOneWidget);
   });
 
   testWidgets('the solved screen fits a 320x568 screen', (tester) async {

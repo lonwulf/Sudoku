@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:sudoku/src/modules/auth/presentation/bloc/auth_cubit.dart';
+import 'package:sudoku/src/modules/leaderboard/presentation/leaderboard_navigation.dart';
 import 'package:sudoku/src/theme/app_theme.dart';
 
-/// App bar account icon: signs in, or shows who is signed in and signs out.
+/// App bar account icon: signs in, or opens the player's score.
 class AccountButton extends StatelessWidget {
   const AccountButton({super.key});
 
@@ -36,35 +37,9 @@ class AccountButton extends StatelessWidget {
                 ),
           color: user == null ? GameColors.onBackground : GameColors.accent,
         ),
-        onPressed: () =>
-            user == null ? signIn(context) : _showAccount(context, user.name),
+        onPressed: () => user == null ? signIn(context) : openMyScore(context),
       ),
     );
-  }
-
-  Future<void> _showAccount(BuildContext context, String name) async {
-    final signOut = await showPlatformDialog<bool>(
-      context: context,
-      builder: (dialogContext) => PlatformAlertDialog(
-        title: const Text('Account'),
-        content: Text('Signed in as $name'),
-        actions: [
-          PlatformDialogAction(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            cupertino: (_, __) =>
-                CupertinoDialogActionData(isDestructiveAction: true),
-            child: const Text('Sign out'),
-          ),
-          PlatformDialogAction(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
-    if (signOut == true && context.mounted) {
-      await context.read<AuthCubit>().signOut();
-    }
   }
 }
 

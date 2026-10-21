@@ -8,6 +8,7 @@ import 'package:sudoku/src/config/app_config.dart';
 import 'package:sudoku/src/di/core_module.dart';
 import 'package:sudoku/src/modules/auth/di/auth_module.dart';
 import 'package:sudoku/src/modules/game/di/game_module.dart';
+import 'package:sudoku/src/modules/leaderboard/di/leaderboard_module.dart';
 import 'package:sudoku/src/modules/reminder/di/reminder_module.dart';
 
 // Sentry initialises the Flutter binding and installs the framework and
@@ -27,6 +28,7 @@ Future<void> _startApp() async {
     setupNetworkDependencies();
     setupAuthModuleDependencies();
     setupGameModuleDependencies();
+    setupLeaderboardModuleDependencies();
     setupReminderModuleDependencies();
   } catch (error, stackTrace) {
     // Without this, a startup failure never reaches runApp and leaves a
