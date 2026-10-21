@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sudoku/src/modules/game/domain/model/sudoku_game_model.dart';
+import 'package:sudoku/src/theme/app_theme.dart';
 
 /// The 9x9 board. Cells are sized from the available space so the board
 /// fits narrow and short screens instead of overflowing.
@@ -27,7 +28,7 @@ class SudokuGrid extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: const Color(0xFF1E2940),
+            color: GameColors.surface,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Column(
@@ -99,12 +100,12 @@ class SudokuCell extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: isError
-              ? const Color(0xFF8B4B68)
+              ? GameColors.conflict
               : isSelected
-              ? const Color(0xFF4169E1)
+              ? GameColors.selected
               : isHighlighted
-              ? const Color(0xFF4B5B8B)
-              : const Color(0xFF2C3E5A),
+              ? GameColors.highlighted
+              : GameColors.background,
           borderRadius: BorderRadius.circular(4),
         ),
         child: Center(
@@ -114,7 +115,9 @@ class SudokuCell extends StatelessWidget {
                   child: Text(
                     '$value',
                     style: TextStyle(
-                      color: isGiven ? Colors.white : const Color(0xFF9FB4FF),
+                      color: isGiven
+                          ? GameColors.onBackground
+                          : GameColors.playerEntry,
                       fontSize: 18,
                       fontWeight: isGiven ? FontWeight.w600 : FontWeight.w400,
                     ),

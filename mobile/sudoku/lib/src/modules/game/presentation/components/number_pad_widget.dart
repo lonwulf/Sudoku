@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sudoku/src/theme/app_theme.dart';
 
 /// Keys 1-9. The key matching [selectedValue] is highlighted.
 class NumberPad extends StatelessWidget {
@@ -17,7 +18,7 @@ class NumberPad extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E2940),
+        color: GameColors.surface,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -32,14 +33,19 @@ class NumberPad extends StatelessWidget {
                   height: 48,
                   decoration: BoxDecoration(
                     color: number == selectedValue
-                        ? const Color(0xFF4ECDC4)
-                        : const Color(0xFF2C3E5A),
+                        ? GameColors.accent
+                        : GameColors.background,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Center(
                     child: Text(
                       '$number',
-                      style: const TextStyle(fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        color: number == selectedValue
+                            ? GameColors.onAccent
+                            : GameColors.onBackground,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),

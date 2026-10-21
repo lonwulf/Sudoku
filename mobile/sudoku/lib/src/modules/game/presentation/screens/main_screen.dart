@@ -8,6 +8,7 @@ import 'package:sudoku/src/modules/game/presentation/bloc/main_bloc.dart';
 import 'package:sudoku/src/modules/game/presentation/components/game_timer.dart';
 import 'package:sudoku/src/modules/game/presentation/components/number_pad_widget.dart';
 import 'package:sudoku/src/modules/game/presentation/components/sudoku_grid.dart';
+import 'package:sudoku/src/theme/app_theme.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -28,9 +29,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return PlatformScaffold(
-      backgroundColor: const Color(0xFF2C3E5A),
       appBar: PlatformAppBar(
-        backgroundColor: const Color(0xFF2C3E5A),
         title:
             BlocSelector<MainBloc, GenericResultState<SudokuGameModel>, String>(
               selector: (state) => state is Success<SudokuGameModel>
@@ -38,12 +37,15 @@ class _MainScreenState extends State<MainScreen> {
                   : '',
               builder: (context, difficulty) => PlatformText(
                 _capitalize(difficulty),
-                style: const TextStyle(color: Color(0xFFFFFFFE), fontSize: 16),
+                style: const TextStyle(
+                  color: GameColors.onBackground,
+                  fontSize: 16,
+                ),
               ),
             ),
         trailingActions: [
           PlatformIconButton(
-            icon: const Icon(Icons.pause, color: Color(0xFFFFFFFE)),
+            icon: const Icon(Icons.pause, color: GameColors.onBackground),
             onPressed: () {},
           ),
           PlatformIconButton(
@@ -52,7 +54,7 @@ class _MainScreenState extends State<MainScreen> {
                 material: Icons.notifications_outlined,
                 cupertino: CupertinoIcons.bell,
               ),
-              color: Color(0xFFFFFFFE),
+              color: GameColors.onBackground,
             ),
             onPressed: () {},
           ),
@@ -86,7 +88,7 @@ class _MainScreenState extends State<MainScreen> {
             Text(
               msg == null || msg.isEmpty ? 'Something went wrong' : msg,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.red, fontSize: 16),
+              style: const TextStyle(color: GameColors.errorText, fontSize: 16),
             ),
             const SizedBox(height: 16),
             PlatformTextButton(
@@ -145,7 +147,7 @@ class _MainScreenState extends State<MainScreen> {
     return GameTimer(
       key: ValueKey(model.id),
       style: const TextStyle(
-        color: Colors.white,
+        color: GameColors.onBackground,
         fontSize: 48,
         fontWeight: FontWeight.w300,
       ),
@@ -187,15 +189,15 @@ class _MainScreenState extends State<MainScreen> {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: const Color(0xFF1E2940),
+            color: GameColors.surface,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: Colors.white70, size: 24),
+          child: Icon(icon, color: GameColors.muted, size: 24),
         ),
         const SizedBox(height: 8),
         Text(
           label,
-          style: const TextStyle(color: Colors.white54, fontSize: 12),
+          style: const TextStyle(color: GameColors.subtle, fontSize: 12),
         ),
       ],
     );
