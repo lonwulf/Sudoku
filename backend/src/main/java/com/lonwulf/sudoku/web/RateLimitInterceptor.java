@@ -13,8 +13,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
  * Limits one bucket of endpoints per client: the authenticated user, else the remote address.
- * Behind a reverse proxy the remote address is the proxy's unless forwarded headers are trusted
- * (server.forward-headers-strategy).
+ * Behind a reverse proxy the remote address comes from X-Forwarded-For (server.forward-headers-strategy).
  */
 public class RateLimitInterceptor implements HandlerInterceptor {
     private final RateLimiter rateLimiter;
