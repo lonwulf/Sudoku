@@ -1,12 +1,13 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
-class LoggerService{
-  static void logError(dynamic error, {StackTrace? stackTrace}){
-    if(stackTrace != null){
+class LoggerService {
+  static void logError(dynamic error, {StackTrace? stackTrace}) {
+    if (stackTrace != null) {
       debugPrint("Error: $error\nSTACK: $stackTrace");
-    } else{
+    } else {
       debugPrint("Error: $error");
     }
-    //todo send to sentry
+    Sentry.captureException(error, stackTrace: stackTrace);
   }
 }

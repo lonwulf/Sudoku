@@ -1,33 +1,26 @@
-import 'dart:async';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:sudoku/src/app/sudoku_app.dart';
 import 'package:sudoku/src/config/app_config.dart';
-import 'package:sudoku/src/core/util/logger_service.dart';
 import 'package:sudoku/src/di/core_module.dart';
 import 'package:sudoku/src/modules/game/di/game_module.dart';
 
+// Sentry initialises the Flutter binding and installs the framework and
+// platform error handlers, so it starts first and wraps the rest of startup.
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await SentryFlutter.init((options) {
+    options.dsn = AppConfig.sentryDsn;
+    options.environment = AppConfig.environment;
+    options.tracesSampleRate = kReleaseMode ? 0.2 : 1.0;
+  }, appRunner: _startApp);
+}
 
+Future<void> _startApp() async {
   AppConfig.validate();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await setupNetworkDependencies();
   await setupGameModuleDependencies();
-  // debugPrint("🚀 Starting app without Sentry");
-  // runApp(const SudokuApp());
-  runZonedGuarded(
-    () {
-      return SentryFlutter.init((options) {
-        options.dsn = AppConfig.sentryDsn;
-        options.tracesSampleRate = 1.0;
-      }, appRunner: () => runApp(const SudokuApp()));
-    },
-    (error, stacktrace) {
-      LoggerService.logError(error, stackTrace: stacktrace);
-      throw StateError('This is test exception');
-    },
-  );
+  runApp(const SudokuApp());
 }
