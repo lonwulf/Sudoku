@@ -8,6 +8,7 @@ import 'package:sudoku/src/modules/game/presentation/bloc/main_bloc.dart';
 import 'package:sudoku/src/modules/game/presentation/components/game_timer.dart';
 import 'package:sudoku/src/modules/game/presentation/components/number_pad_widget.dart';
 import 'package:sudoku/src/modules/game/presentation/components/sudoku_grid.dart';
+import 'package:sudoku/src/modules/reminder/presentation/components/reminder_button.dart';
 import 'package:sudoku/src/theme/app_theme.dart';
 
 class MainScreen extends StatefulWidget {
@@ -74,16 +75,7 @@ class _MainScreenState extends State<MainScreen> {
               onPressed: () => setState(() => paused = !paused),
             ),
           ),
-          PlatformIconButton(
-            icon: Icon(
-              context.platformIcon(
-                material: Icons.notifications_outlined,
-                cupertino: CupertinoIcons.bell,
-              ),
-              color: GameColors.onBackground,
-            ),
-            onPressed: () {},
-          ),
+          const ReminderButton(),
         ],
       ),
       body: SafeArea(

@@ -7,6 +7,7 @@ import 'package:sudoku/src/app/sudoku_app.dart';
 import 'package:sudoku/src/config/app_config.dart';
 import 'package:sudoku/src/di/core_module.dart';
 import 'package:sudoku/src/modules/game/di/game_module.dart';
+import 'package:sudoku/src/modules/reminder/di/reminder_module.dart';
 
 // Sentry initialises the Flutter binding and installs the framework and
 // platform error handlers, so it starts first and wraps the rest of startup.
@@ -24,6 +25,7 @@ Future<void> _startApp() async {
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     setupNetworkDependencies();
     setupGameModuleDependencies();
+    setupReminderModuleDependencies();
   } catch (error, stackTrace) {
     // Without this, a startup failure never reaches runApp and leaves a
     // black screen.

@@ -1,12 +1,18 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sudoku/src/core/util/generic_use_case_result.dart';
 import 'package:sudoku/src/core/util/network_monitor.dart';
 import 'package:sudoku/src/modules/game/domain/model/sudoku_game_model.dart';
 import 'package:sudoku/src/modules/game/domain/repository/main_repository.dart';
 import 'package:sudoku/src/modules/game/domain/usecase/main_use_case.dart';
 import 'package:sudoku/src/modules/game/presentation/bloc/main_bloc.dart';
+import 'package:sudoku/src/modules/game/presentation/screens/main_screen.dart';
+import 'package:sudoku/src/modules/reminder/data/reminder_service.dart';
+import 'package:sudoku/src/modules/reminder/domain/model/reminder_settings.dart';
+import 'package:sudoku/src/modules/reminder/presentation/bloc/reminder_cubit.dart';
 
 const testPuzzle = [
   [0, 2, 0, 0, 0, 0, 7, 0, 9],
@@ -77,3 +83,46 @@ MainBloc testBloc({FakeUseCase? useCase, FakeConnectivity? connectivity}) =>
       useCase ?? FakeUseCase(),
       NetworkMonitor(connectivity: connectivity ?? FakeConnectivity()),
     );
+
+class FakeReminderService implements ReminderService {
+  ReminderSettings saved;
+  bool permissionGranted;
+
+  FakeReminderService({
+    this.saved = const ReminderSettings.off(),
+    this.permissionGranted = true,
+  });
+
+  @override
+  Future<ReminderSettings> load() async => saved;
+
+  @override
+  Future<bool> enable(int hour, int minute) async {
+    if (!permissionGranted) return false;
+    saved = ReminderSettings(enabled: true, hour: hour, minute: minute);
+    return true;
+  }
+
+  @override
+  Future<void> disable() async {
+    saved = ReminderSettings(
+      enabled: false,
+      hour: saved.hour,
+      minute: saved.minute,
+    );
+  }
+}
+
+/// MainScreen with its blocs, as SudokuApp provides them.
+Widget testApp({MainBloc? bloc, ReminderService? reminders}) => MaterialApp(
+  home: MultiBlocProvider(
+    providers: [
+      BlocProvider(create: (_) => bloc ?? testBloc()),
+      BlocProvider(
+        create: (_) =>
+            ReminderCubit(reminders ?? FakeReminderService())..load(),
+      ),
+    ],
+    child: const MainScreen(),
+  ),
+);

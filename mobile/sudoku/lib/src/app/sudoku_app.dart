@@ -7,6 +7,8 @@ import 'package:sudoku/src/di/constant.dart';
 import 'package:sudoku/src/modules/game/domain/usecase/main_use_case.dart';
 import 'package:sudoku/src/modules/game/presentation/bloc/main_bloc.dart';
 import 'package:sudoku/src/modules/game/presentation/screens/main_screen.dart';
+import 'package:sudoku/src/modules/reminder/data/reminder_service.dart';
+import 'package:sudoku/src/modules/reminder/presentation/bloc/reminder_cubit.dart';
 
 import '../theme/app_theme.dart';
 
@@ -29,9 +31,16 @@ class SudokuApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         material: (_, __) => MaterialAppData(theme: buildMaterialTheme()),
         cupertino: (_, __) => CupertinoAppData(theme: buildCupertinoTheme()),
-        home: BlocProvider(
-          create: (_) =>
-              MainBloc(getIt<MainUseCase>(), getIt<NetworkMonitor>()),
+        home: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (_) =>
+                  MainBloc(getIt<MainUseCase>(), getIt<NetworkMonitor>()),
+            ),
+            BlocProvider(
+              create: (_) => ReminderCubit(getIt<ReminderService>())..load(),
+            ),
+          ],
           child: const MainScreen(),
         ),
       ),
