@@ -51,6 +51,46 @@ void main() {
     expect(find.bySemanticsLabel('Row 1, column 1, 1'), findsOneWidget);
   });
 
+  testWidgets('action buttons drive notes, undo, hint and erase', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: BlocProvider(
+          create: (_) => testBloc(),
+          child: const MainScreen(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.bySemanticsLabel('Row 1, column 1, empty'));
+    await tester.tap(find.bySemanticsLabel('Notes'));
+    await tester.pump();
+    await tester.tap(find.bySemanticsLabel('Enter 4'));
+    await tester.tap(find.bySemanticsLabel('Enter 6'));
+    await tester.pump();
+    expect(
+      find.bySemanticsLabel('Row 1, column 1, empty, notes 4 6'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.bySemanticsLabel('Undo'));
+    await tester.pump();
+    expect(
+      find.bySemanticsLabel('Row 1, column 1, empty, notes 4'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.bySemanticsLabel('Hint'));
+    await tester.pump();
+    expect(find.bySemanticsLabel('Row 1, column 1, 1'), findsOneWidget);
+
+    await tester.tap(find.bySemanticsLabel('Erase'));
+    await tester.pump();
+    expect(find.bySemanticsLabel('Row 1, column 1, empty'), findsOneWidget);
+  });
+
   for (final size in const [Size(320, 568), Size(360, 640), Size(412, 915)]) {
     testWidgets('main screen fits a ${size.width}x${size.height} screen', (
       tester,

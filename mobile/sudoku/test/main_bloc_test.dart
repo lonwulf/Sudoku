@@ -44,6 +44,91 @@ void main() {
     });
   });
 
+  group('undo, notes, hint and erase', () {
+    late MainBloc bloc;
+
+    setUp(() async {
+      bloc = testBloc();
+      await bloc.fetchSudokuChallenge();
+    });
+
+    tearDown(() => bloc.close());
+
+    test('undo reverts changes one at a time', () {
+      expect(bloc.canUndo, isFalse);
+
+      bloc.enterNumber(0, 0, 5);
+      bloc.enterNumber(0, 0, 1);
+      bloc.undo();
+      expect(_model(bloc).board[0][0], 5);
+
+      bloc.undo();
+      expect(_model(bloc).board[0][0], 0);
+      expect(bloc.canUndo, isFalse);
+    });
+
+    test('changes that do nothing are not added to the undo history', () {
+      bloc.enterNumber(0, 1, 5); // given cell
+      bloc.erase(0, 0); // already empty
+
+      expect(bloc.canUndo, isFalse);
+    });
+
+    test('notes toggle on empty cells only', () {
+      bloc.toggleNote(0, 0, 3);
+      bloc.toggleNote(0, 0, 4);
+      bloc.toggleNote(0, 0, 3);
+      bloc.toggleNote(0, 1, 3); // given cell
+
+      expect(_model(bloc).notesAt(0, 0), {4});
+      expect(_model(bloc).notesAt(0, 1), isEmpty);
+    });
+
+    test('entering a value clears its notes and the digit from peers', () {
+      bloc.toggleNote(0, 0, 1);
+      bloc.toggleNote(0, 2, 3); // same row
+      bloc.toggleNote(2, 2, 3); // same box
+      bloc.toggleNote(8, 1, 3); // unrelated empty cell
+
+      bloc.enterNumber(0, 0, 3);
+
+      expect(_model(bloc).notesAt(0, 0), isEmpty);
+      expect(_model(bloc).notesAt(0, 2), isEmpty);
+      expect(_model(bloc).notesAt(2, 2), isEmpty);
+      expect(_model(bloc).notesAt(8, 1), {3});
+    });
+
+    test('erase clears a value and notes but not givens', () {
+      bloc.enterNumber(0, 0, 5);
+      bloc.erase(0, 0);
+      bloc.erase(0, 1);
+
+      expect(_model(bloc).board[0][0], 0);
+      expect(_model(bloc).board[0][1], 2);
+    });
+
+    test('hint fills the selected cell with its solution', () {
+      expect(bloc.hint(2), 2);
+      expect(_model(bloc).board[0][2], 3);
+    });
+
+    test('hint falls back to the first cell that needs one', () {
+      bloc.enterNumber(0, 0, 1); // correct already
+
+      expect(bloc.hint(0), 2);
+      expect(bloc.hint(null), 3);
+      expect(_model(bloc).board[0][3], 4);
+    });
+
+    test('hint does nothing on a solved board', () {
+      for (var i = 0; i < 81; i++) {
+        bloc.enterNumber(i ~/ 9, i % 9, testSolution[i ~/ 9][i % 9]);
+      }
+
+      expect(bloc.hint(null), isNull);
+    });
+  });
+
   group('connectivity', () {
     late FakeConnectivity connectivity;
     late FakeUseCase useCase;

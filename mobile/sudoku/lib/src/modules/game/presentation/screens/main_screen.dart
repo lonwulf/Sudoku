@@ -20,6 +20,9 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int? selectedCell;
 
+  /// When on, the number pad toggles pencil marks instead of entering values.
+  bool notesMode = false;
+
   @override
   void initState() {
     super.initState();
@@ -131,13 +134,17 @@ class _MainScreenState extends State<MainScreen> {
           selectedValue: selectedValue(model),
           onNumber: (number) {
             final cell = selectedCell;
-            if (cell != null) {
-              context.read<MainBloc>().enterNumber(cell ~/ 9, cell % 9, number);
+            if (cell == null) return;
+            final bloc = context.read<MainBloc>();
+            if (notesMode) {
+              bloc.toggleNote(cell ~/ 9, cell % 9, number);
+            } else {
+              bloc.enterNumber(cell ~/ 9, cell % 9, number);
             }
           },
         ),
         const SizedBox(height: 20),
-        buildBottomActions(context),
+        buildBottomActions(model),
         const SizedBox(height: 20),
       ],
     );
@@ -154,8 +161,11 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget buildBottomActions(BuildContext context) {
+  Widget buildBottomActions(SudokuGameModel model) {
     final bool isAndroid = isMaterial(context);
+    final bloc = context.read<MainBloc>();
+    final cell = selectedCell;
+    final canErase = cell != null && !model.isGiven(cell ~/ 9, cell % 9);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40),
       child: Row(
@@ -164,42 +174,77 @@ class _MainScreenState extends State<MainScreen> {
           buildActionButton(
             isAndroid ? Icons.undo : CupertinoIcons.arrow_uturn_left,
             'Undo',
+            onTap: bloc.canUndo ? bloc.undo : null,
           ),
           buildActionButton(
             isAndroid ? Icons.edit_outlined : CupertinoIcons.pencil,
             'Notes',
+            active: notesMode,
+            onTap: () => setState(() => notesMode = !notesMode),
           ),
           buildActionButton(
             isAndroid ? Icons.lightbulb_outline : CupertinoIcons.lightbulb,
             'Hint',
+            onTap: () {
+              final target = bloc.hint(selectedCell);
+              if (target != null) setState(() => selectedCell = target);
+            },
           ),
           buildActionButton(
             isAndroid ? Icons.delete_outline : CupertinoIcons.delete,
             'Erase',
+            onTap: canErase ? () => bloc.erase(cell ~/ 9, cell % 9) : null,
           ),
         ],
       ),
     );
   }
 
-  Widget buildActionButton(IconData icon, String label) {
-    return Column(
-      children: [
-        Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: GameColors.surface,
-            borderRadius: BorderRadius.circular(12),
+  /// A labelled action; [onTap] null disables it, [active] marks a toggle on.
+  Widget buildActionButton(
+    IconData icon,
+    String label, {
+    required VoidCallback? onTap,
+    bool active = false,
+  }) {
+    return Semantics(
+      button: true,
+      enabled: onTap != null,
+      toggled: label == 'Notes' ? active : null,
+      label: label,
+      excludeSemantics: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Opacity(
+          opacity: onTap == null ? 0.4 : 1,
+          child: Column(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: active ? GameColors.accent : GameColors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  icon,
+                  color: active ? GameColors.onAccent : GameColors.muted,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  color: active ? GameColors.accent : GameColors.subtle,
+                  fontSize: 12,
+                ),
+              ),
+            ],
           ),
-          child: Icon(icon, color: GameColors.muted, size: 24),
         ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: const TextStyle(color: GameColors.subtle, fontSize: 12),
-        ),
-      ],
+      ),
     );
   }
 }

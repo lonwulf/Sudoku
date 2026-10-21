@@ -45,6 +45,7 @@ class SudokuGrid extends StatelessWidget {
                         row: row,
                         col: col,
                         value: value,
+                        notes: model.notesAt(row, col),
                         isGiven: isGiven,
                         isSelected: isSelected,
                         isHighlighted:
@@ -71,6 +72,7 @@ class SudokuCell extends StatelessWidget {
   final int row;
   final int col;
   final int value;
+  final Set<int> notes;
   final bool isGiven;
   final bool isSelected;
   final bool isHighlighted;
@@ -82,6 +84,7 @@ class SudokuCell extends StatelessWidget {
     required this.row,
     required this.col,
     required this.value,
+    this.notes = const {},
     required this.isGiven,
     required this.isSelected,
     required this.isHighlighted,
@@ -93,6 +96,8 @@ class SudokuCell extends StatelessWidget {
     final parts = [
       'Row ${row + 1}, column ${col + 1}',
       value == 0 ? 'empty' : '$value',
+      if (value == 0 && notes.isNotEmpty)
+        'notes ${(notes.toList()..sort()).join(' ')}',
       if (isGiven) 'given',
       if (isError) 'incorrect',
     ];
@@ -138,9 +143,52 @@ class SudokuCell extends StatelessWidget {
                       ),
                     ),
                   )
-                : null,
+                : notes.isEmpty
+                ? null
+                : _NotesGrid(notes: notes),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Pencil marks laid out 1-9 in a 3x3 grid inside the cell.
+class _NotesGrid extends StatelessWidget {
+  final Set<int> notes;
+
+  const _NotesGrid({required this.notes});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(1),
+      child: Column(
+        children: List.generate(3, (row) {
+          return Expanded(
+            child: Row(
+              children: List.generate(3, (col) {
+                final number = row * 3 + col + 1;
+                return Expanded(
+                  child: Center(
+                    child: notes.contains(number)
+                        ? FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              '$number',
+                              style: const TextStyle(
+                                color: GameColors.muted,
+                                fontSize: 9,
+                              ),
+                            ),
+                          )
+                        : null,
+                  ),
+                );
+              }),
+            ),
+          );
+        }),
       ),
     );
   }
