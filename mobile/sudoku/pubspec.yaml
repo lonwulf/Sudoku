@@ -37,6 +37,7 @@ dependencies:
   dio: ^5.9.0
   get_it: ^8.2.0
   pretty_dio_logger: ^1.4.0
+  connectivity_plus: ^7.0.0
   json_annotation: ^4.9.0
   flutter_bloc: ^9.1.1
   flutter_platform_widgets: ^9.0.0
