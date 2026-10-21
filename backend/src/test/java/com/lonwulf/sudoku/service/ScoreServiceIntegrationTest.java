@@ -19,8 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// No Redis runs during tests, which doubles as the "Redis fails after the DB commit" case
-@SpringBootTest
+// Redis is pointed at a closed port, so this is the "Redis fails after the DB commit" case even
+// when a dev Redis is running on the default port
+@SpringBootTest(properties = "spring.data.redis.port=1")
 class ScoreServiceIntegrationTest {
     @Autowired
     private ScoreService scoreService;
