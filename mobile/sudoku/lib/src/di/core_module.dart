@@ -1,19 +1,15 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:sudoku/src/config/app_config.dart';
 
 import 'constant.dart';
 
 Future<void> setupNetworkDependencies() async {
-  getIt.registerLazySingleton<PrettyDioLogger>(
-    () => provideLoggingInterceptor(),
-  );
-  getIt.registerLazySingleton<Dio>(
-    () => provideDioClient(getIt<PrettyDioLogger>()),
-  );
+  getIt.registerLazySingleton<Dio>(() => provideDioClient());
 }
 
-Dio provideDioClient(PrettyDioLogger logger) {
+Dio provideDioClient() {
   final dio = Dio(
     BaseOptions(
       baseUrl: AppConfig.apiBaseUrl,
@@ -22,7 +18,10 @@ Dio provideDioClient(PrettyDioLogger logger) {
       sendTimeout: const Duration(seconds: 60),
     ),
   );
-  dio.interceptors.add(logger);
+  // Logging full bodies costs UI-thread time and leaks data to logcat.
+  if (kDebugMode) {
+    dio.interceptors.add(provideLoggingInterceptor());
+  }
   return dio;
 }
 
