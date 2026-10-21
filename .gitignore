@@ -1,3 +1,7 @@
 .idea/workspace.xml
 .idea/libraries
 mobile/sudoku/sentry-wizard
+
+.gradle/
+build/
+local.properties
