@@ -11,14 +11,15 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anySet;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -28,6 +29,7 @@ class ScoreServiceTest {
     private IUserRepository userRepo;
     private StringRedisTemplate redisTemplate;
     private ZSetOperations<String, String> zSet;
+    private LeaderboardRebuildService rebuildService;
     private ScoreService scoreService;
 
     @BeforeEach
@@ -39,7 +41,8 @@ class ScoreServiceTest {
         when(redisTemplate.opsForZSet()).thenReturn(zSet);
         when(zSet.size(Constants.GLOBAL_LEADERBOARD)).thenReturn(1000L);
         when(userRepo.findAllById(any())).thenReturn(List.of());
-        scoreService = new ScoreService(userRepo, redisTemplate);
+        rebuildService = mock(LeaderboardRebuildService.class);
+        scoreService = new ScoreService(userRepo, redisTemplate, rebuildService);
     }
 
     @Test
@@ -73,25 +76,30 @@ class ScoreServiceTest {
     }
 
     @Test
-    void rebuildKeepsShadowBannedUsersOffTheGlobalBoard() {
-        User honest = new User("honest");
-        honest.setLifetimeScore(50);
-        when(userRepo.findByShadowBanned(false)).thenReturn(List.of(honest));
+    @SuppressWarnings("unchecked")
+    void userNotOnBoardIsUnrankedNotInitializing() {
+        // used to answer "initializing" forever for anyone who hadn't scored since the last rebuild
+        User newcomer = new User("newcomer");
+        when(redisTemplate.executePipelined(any(RedisCallback.class)))
+                .thenReturn(Arrays.asList(tuples("top1", "top2"), null, null));
 
-        scoreService.rebuildLeaderboard(Constants.GLOBAL_LEADERBOARD);
+        LeaderboardResponseDTO response = scoreService.getLeaderboardData(newcomer, 0, 10, 2);
 
-        verify(userRepo, never()).findByShadowBanned(true);
-        verify(zSet).add(eq(Constants.GLOBAL_LEADERBOARD),
-                eq(Set.of(ZSetOperations.TypedTuple.of("honest", 50.0))));
+        assertEquals("ready", response.state());
+        assertNull(response.me());
+        assertEquals(List.of(), response.nearby());
+        assertEquals(2, response.global().size());
+        verify(zSet, never()).reverseRangeWithScores(any(), anyLong(), anyLong());
     }
 
     @Test
-    void rebuildSkipsRedisWhenThereIsNobodyToAdd() {
-        when(userRepo.findByShadowBanned(true)).thenReturn(List.of());
+    void emptyBoardStartsAnAsyncRebuild() {
+        when(zSet.size(Constants.GLOBAL_LEADERBOARD)).thenReturn(0L);
 
-        scoreService.rebuildLeaderboard(Constants.SHADOW_LEADERBOARD);
+        LeaderboardResponseDTO response = scoreService.getLeaderboardData(new User("me"), 0, 10, 2);
 
-        verify(zSet, never()).add(any(), anySet());
+        assertEquals("initializing", response.state());
+        verify(rebuildService).rebuildAsync(Constants.GLOBAL_LEADERBOARD);
     }
 
     @SuppressWarnings("unchecked")

@@ -48,6 +48,11 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+// only the boot jar is deployed; skipping the plain jar keeps build/libs/*.jar to one file
+tasks.named('jar') {
+	enabled = false
+}
+
 tasks.named("bootBuildImage"){
     imageName = "sudoku-backend:latest"
 }

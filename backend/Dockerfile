@@ -8,11 +8,11 @@ COPY gradlew .
 COPY gradle gradle
 COPY build.gradle settings.gradle ./
 
-# Download dependencies
-RUN ./gradlew dependencies --no-daemon || return 0
+# Download dependencies (cached until the build files change)
+RUN ./gradlew dependencies --no-daemon > /dev/null || true
 
-# Copy rest of the source
-COPY . .
+# Copy the sources only
+COPY src src
 
 # Build springboot jar
 RUN ./gradlew bootJar --no-daemon
@@ -21,9 +21,13 @@ RUN ./gradlew bootJar --no-daemon
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
+# Don't run the app as root
+RUN groupadd --system spring && useradd --system --gid spring spring
+
 # Copy only the built jar from build stage
-COPY --from=build /app/build/libs/*.jar app.jar
+COPY --from=build --chown=spring:spring /app/build/libs/*.jar app.jar
+USER spring
 EXPOSE 8080
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Run the application, sizing the heap from the container's memory limit
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75", "-jar", "app.jar"]

@@ -2,10 +2,10 @@ package com.lonwulf.sudoku.security;
 
 import com.lonwulf.sudoku.data.entity.User;
 import com.lonwulf.sudoku.data.repository.IUserRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class AuthUtil {
@@ -39,17 +39,21 @@ public class AuthUtil {
         return name;
     }
 
-    @Transactional
+    // Not @Transactional on purpose: the insert runs in its own transaction so a lost race
+    // (two first requests from the same new user) can be caught and the winner's row read back
     public User ensureUserExists(Authentication authentication){
         String userId = getUserId(authentication);
         return userRepository.findById(userId).orElseGet(() -> {
-           User user = new User();
-            user.setId(userId);
+            User user = new User(userId);
             user.setEmail(getEmail(authentication));
             user.setDisplayName(getDisplayName(authentication));
             user.setLifetimeScore(0);
             user.setPuzzlesCompleted(0);
-            return userRepository.save(user);
+            try {
+                return userRepository.saveAndFlush(user);
+            } catch (DataIntegrityViolationException e) {
+                return userRepository.findById(userId).orElseThrow(() -> e);
+            }
         });
     }
 }

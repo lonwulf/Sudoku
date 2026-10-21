@@ -10,6 +10,7 @@ import com.lonwulf.sudoku.data.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -21,7 +22,11 @@ public class FraudDetectionService {
     private final StringRedisTemplate redisTemplate;
     private final ILeaderboardAuditLogRepository leaderboardAuditLogRepository;
 
-    public void flagCheating(String userId, String reason) {
+    /**
+     * @param triggeredBy "fraud-detection" or "admin:&lt;authenticated admin&gt;"
+     */
+    @Transactional
+    public void flagCheating(String userId, String reason, String triggeredBy) {
         FraudFlag flag = new FraudFlag();
         flag.setUserId(userId);
         flag.setReason(reason);
@@ -33,21 +38,36 @@ public class FraudDetectionService {
         userRepository.save(user);
 
         // Move score from global → shadow leaderboard
-        Double score = redisTemplate.opsForZSet().score(Constants.GLOBAL_LEADERBOARD, userId);
-        if (score != null) {
-            redisTemplate.opsForZSet()
-                    .remove(Constants.GLOBAL_LEADERBOARD, userId);
-            redisTemplate.opsForZSet()
-                    .add(Constants.SHADOW_LEADERBOARD, userId, score);
-        }
+        moveBetweenLeaderboards(user, Constants.GLOBAL_LEADERBOARD, Constants.SHADOW_LEADERBOARD);
+        audit(userId, LeaderboardAuditLog.ActionType.MOVED_TO_SHADOW, reason, triggeredBy);
+    }
 
+    @Transactional
+    public void liftShadowBan(String userId, String reason, String triggeredBy) {
+        User user = userRepository.findById(userId).orElseThrow();
+        if (!user.isShadowBanned()) return;
+
+        user.setShadowBanned(false);
+        userRepository.save(user);
+
+        // Move score from shadow → global leaderboard
+        moveBetweenLeaderboards(user, Constants.SHADOW_LEADERBOARD, Constants.GLOBAL_LEADERBOARD);
+        audit(userId, LeaderboardAuditLog.ActionType.MOVED_TO_GLOBAL, reason, triggeredBy);
+    }
+
+    // the database score is the source of truth, so this works even if the user was never on the source board
+    private void moveBetweenLeaderboards(User user, String from, String to) {
+        redisTemplate.opsForZSet().remove(from, user.getId());
+        redisTemplate.opsForZSet().add(to, user.getId(), user.getLifetimeScore());
+    }
+
+    private void audit(String userId, LeaderboardAuditLog.ActionType action, String reason, String triggeredBy) {
         LeaderboardAuditLog auditLog = new LeaderboardAuditLog();
         auditLog.setUserId(userId);
-        auditLog.setAction(LeaderboardAuditLog.ActionType.MOVED_TO_SHADOW);
+        auditLog.setAction(action);
         auditLog.setReason(reason);
-        auditLog.setTriggeredBy("fraud-detection");
+        auditLog.setTriggeredBy(triggeredBy);
         auditLog.setTimestamp(LocalDateTime.now());
-
         leaderboardAuditLogRepository.save(auditLog);
     }
 }
