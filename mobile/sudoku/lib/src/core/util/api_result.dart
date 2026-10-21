@@ -1,4 +1,4 @@
-import 'APIStatus.dart';
+import 'api_status.dart';
 
 class APIResult<T> {
   final T? result;
@@ -44,11 +44,11 @@ class APIResult<T> {
 }
 
 enum HttpResult {
-  SLOW_CONNECTION,
-  TIMEOUT,
-  SERVER_ERROR,
-  CLIENT_ERROR,
-  BAD_RESPONSE,
-  UN_DEFINED,
-  NOT_FOUND,
+  slowConnection,
+  timeout,
+  serverError,
+  clientError,
+  badResponse,
+  undefined,
+  notFound,
 }

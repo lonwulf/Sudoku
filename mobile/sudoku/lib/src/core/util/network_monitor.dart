@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 class NetworkMonitor{
@@ -23,7 +22,7 @@ class NetworkMonitor{
 
   Future<void> checkInitialConnection() async {
     final result = await connectivity.checkConnectivity();
-    final isConnected = result != ConnectivityResult.none;
+    final isConnected = result.any((r) => r != ConnectivityResult.none);
     networkChangeController.add(isConnected);
   }
 

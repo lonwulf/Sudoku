@@ -1,5 +1,5 @@
-import 'package:sudoku/src/modules/game/data/response/SudokuGameDTO.dart';
-import 'package:sudoku/src/modules/game/domain/model/SudokuGameModel.dart';
+import 'package:sudoku/src/modules/game/data/response/sudoku_game_dto.dart';
+import 'package:sudoku/src/modules/game/domain/model/sudoku_game_model.dart';
 
 extension SudokuPuzzleMapper on SudokuGameDTO {
   SudokuGameModel toDomainModel() {

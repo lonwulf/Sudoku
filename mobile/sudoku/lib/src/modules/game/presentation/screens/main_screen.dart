@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:sudoku/src/core/util/GenericResultState.dart';
-import 'package:sudoku/src/modules/game/domain/model/SudokuGameModel.dart';
-import 'package:sudoku/src/modules/game/presentation/bloc/MainBloc.dart';
+import 'package:sudoku/src/core/util/generic_result_state.dart';
+import 'package:sudoku/src/modules/game/domain/model/sudoku_game_model.dart';
+import 'package:sudoku/src/modules/game/presentation/bloc/main_bloc.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   @override
   State createState() => _MainScreenState();
@@ -159,7 +159,7 @@ class _MainScreenState extends State<MainScreen> {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Center(
-                    child: cells != null
+                    child: cells != 0
                         ? Text(
                             '$cells',
                             style: const TextStyle(

@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-part 'SudokuGameDTO.g.dart';
+part 'sudoku_game_dto.g.dart';
 
 @JsonSerializable()
 class SudokuGameDTO{

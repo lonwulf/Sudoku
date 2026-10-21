@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 
-import '../util/APIResult.dart';
+import '../util/api_result.dart';
 
 abstract class RemoteDataSource {
   Future<APIResult<T>> safeApiCall<T>(Future<T> Function() apiCall) async {
@@ -21,29 +21,29 @@ abstract class RemoteDataSource {
           return APIResult.error(
             code: statusCode,
             msg: ex.message,
-            httpResult: HttpResult.SERVER_ERROR,
+            httpResult: HttpResult.serverError,
           );
         } else {
           return APIResult.error(
             code: statusCode,
             msg: ex.message,
-            httpResult: HttpResult.UN_DEFINED,
+            httpResult: HttpResult.undefined,
           );
         }
       }
       return APIResult.error(
         msg: ex.message,
-        httpResult: HttpResult.UN_DEFINED,
+        httpResult: HttpResult.undefined,
       );
     } on TimeoutException {
       return APIResult.error(
-        msg: HttpResult.TIMEOUT.name,
-        httpResult: HttpResult.TIMEOUT,
+        msg: HttpResult.timeout.name,
+        httpResult: HttpResult.timeout,
       );
     } catch (e) {
       return APIResult.error(
         msg: e.toString(),
-        httpResult: HttpResult.UN_DEFINED,
+        httpResult: HttpResult.undefined,
       );
     }
   }
@@ -58,13 +58,13 @@ abstract class RemoteDataSource {
       return APIResult.error(
         code: ex.response?.statusCode,
         msg: msg,
-        httpResult: HttpResult.CLIENT_ERROR,
+        httpResult: HttpResult.clientError,
       );
     } catch (e) {
       return APIResult.error(
         code: ex.response?.statusCode,
         msg: e.toString(),
-        httpResult: HttpResult.CLIENT_ERROR,
+        httpResult: HttpResult.clientError,
       );
     }
   }

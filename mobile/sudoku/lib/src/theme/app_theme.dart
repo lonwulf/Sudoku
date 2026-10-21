@@ -24,7 +24,7 @@ ThemeData buildMaterialTheme() {
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: sharedScheme.primaryContainer,
       selectedItemColor: sharedScheme.onPrimaryContainer,
-      unselectedItemColor: sharedScheme.onPrimaryContainer.withOpacity(0.7),
+      unselectedItemColor: sharedScheme.onPrimaryContainer.withValues(alpha: 0.7),
       type: BottomNavigationBarType.fixed,
     ),
   );
