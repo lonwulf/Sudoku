@@ -23,10 +23,25 @@ class _MainScreenState extends State<MainScreen> {
   /// When on, the number pad toggles pencil marks instead of entering values.
   bool notesMode = false;
 
+  /// Stops the timer, hides the board and blocks input until resumed.
+  bool paused = false;
+
+  late final AppLifecycleListener lifecycleListener;
+
   @override
   void initState() {
     super.initState();
     context.read<MainBloc>().fetchSudokuChallenge();
+    // Leaving the app pauses the game so the clock doesn't keep running.
+    lifecycleListener = AppLifecycleListener(
+      onHide: () => setState(() => paused = true),
+    );
+  }
+
+  @override
+  void dispose() {
+    lifecycleListener.dispose();
+    super.dispose();
   }
 
   @override
@@ -47,9 +62,17 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ),
         trailingActions: [
-          PlatformIconButton(
-            icon: const Icon(Icons.pause, color: GameColors.onBackground),
-            onPressed: () {},
+          Semantics(
+            button: true,
+            label: paused ? 'Resume' : 'Pause',
+            excludeSemantics: true,
+            child: PlatformIconButton(
+              icon: Icon(
+                paused ? Icons.play_arrow : Icons.pause,
+                color: GameColors.onBackground,
+              ),
+              onPressed: () => setState(() => paused = !paused),
+            ),
           ),
           PlatformIconButton(
             icon: Icon(
@@ -121,38 +144,82 @@ class _MainScreenState extends State<MainScreen> {
           child: Center(
             // Keeps the per-second timer repaint from repainting the board.
             child: RepaintBoundary(
-              child: SudokuGrid(
-                model: model,
-                selectedCell: selectedCell,
-                onCellTap: (index) => setState(() => selectedCell = index),
-              ),
+              child: paused
+                  ? buildPausedBoard()
+                  : SudokuGrid(
+                      model: model,
+                      selectedCell: selectedCell,
+                      onCellTap: (index) =>
+                          setState(() => selectedCell = index),
+                    ),
             ),
           ),
         ),
         const SizedBox(height: 20),
-        NumberPad(
-          selectedValue: selectedValue(model),
-          onNumber: (number) {
-            final cell = selectedCell;
-            if (cell == null) return;
-            final bloc = context.read<MainBloc>();
-            if (notesMode) {
-              bloc.toggleNote(cell ~/ 9, cell % 9, number);
-            } else {
-              bloc.enterNumber(cell ~/ 9, cell % 9, number);
-            }
-          },
+        IgnorePointer(
+          ignoring: paused,
+          child: Opacity(
+            opacity: paused ? 0.4 : 1,
+            child: Column(
+              children: [
+                NumberPad(
+                  selectedValue: selectedValue(model),
+                  onNumber: (number) {
+                    final cell = selectedCell;
+                    if (cell == null) return;
+                    final bloc = context.read<MainBloc>();
+                    if (notesMode) {
+                      bloc.toggleNote(cell ~/ 9, cell % 9, number);
+                    } else {
+                      bloc.enterNumber(cell ~/ 9, cell % 9, number);
+                    }
+                  },
+                ),
+                const SizedBox(height: 20),
+                buildBottomActions(model),
+              ],
+            ),
+          ),
         ),
         const SizedBox(height: 20),
-        buildBottomActions(model),
-        const SizedBox(height: 20),
       ],
+    );
+  }
+
+  /// Covers the board while paused so the puzzle can't be studied.
+  Widget buildPausedBoard() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Container(
+          decoration: BoxDecoration(
+            color: GameColors.surface,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Paused',
+                style: TextStyle(color: GameColors.onBackground, fontSize: 24),
+              ),
+              const SizedBox(height: 16),
+              PlatformElevatedButton(
+                onPressed: () => setState(() => paused = false),
+                child: const Text('Resume'),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
   Widget buildTimer(SudokuGameModel model) {
     return GameTimer(
       key: ValueKey(model.id),
+      paused: paused,
       style: const TextStyle(
         color: GameColors.onBackground,
         fontSize: 48,

@@ -91,6 +91,53 @@ void main() {
     expect(find.bySemanticsLabel('Row 1, column 1, empty'), findsOneWidget);
   });
 
+  group('pause', () {
+    Future<void> pumpScreen(WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider(
+            create: (_) => testBloc(),
+            child: const MainScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('hides the board and blocks input until resumed', (
+      tester,
+    ) async {
+      await pumpScreen(tester);
+      await tester.tap(find.bySemanticsLabel('Row 1, column 1, empty'));
+
+      await tester.tap(find.bySemanticsLabel('Pause'));
+      await tester.pump();
+      expect(find.text('Paused'), findsOneWidget);
+      expect(find.bySemanticsLabel(RegExp('^Row ')), findsNothing);
+
+      await tester.tap(find.bySemanticsLabel('Enter 5'), warnIfMissed: false);
+      await tester.tap(find.text('Resume'));
+      await tester.pump();
+      expect(find.text('Paused'), findsNothing);
+      expect(find.bySemanticsLabel('Row 1, column 1, empty'), findsOneWidget);
+    });
+
+    testWidgets('is paused on return after the app was hidden', (tester) async {
+      final binding = tester.binding;
+      binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await pumpScreen(tester);
+
+      // Frames stop while hidden, so check after coming back.
+      binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pump();
+
+      expect(find.text('Paused'), findsOneWidget);
+    });
+  });
+
   for (final size in const [Size(320, 568), Size(360, 640), Size(412, 915)]) {
     testWidgets('main screen fits a ${size.width}x${size.height} screen', (
       tester,
