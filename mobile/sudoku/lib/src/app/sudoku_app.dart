@@ -4,8 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:sudoku/src/core/util/network_monitor.dart';
 import 'package:sudoku/src/di/constant.dart';
+import 'package:sudoku/src/modules/auth/data/auth_service.dart';
+import 'package:sudoku/src/modules/auth/presentation/bloc/auth_cubit.dart';
 import 'package:sudoku/src/modules/game/domain/usecase/main_use_case.dart';
+import 'package:sudoku/src/modules/game/domain/usecase/submit_solution_use_case.dart';
 import 'package:sudoku/src/modules/game/presentation/bloc/main_bloc.dart';
+import 'package:sudoku/src/modules/game/presentation/bloc/submit_cubit.dart';
 import 'package:sudoku/src/modules/game/presentation/screens/main_screen.dart';
 import 'package:sudoku/src/modules/reminder/data/reminder_service.dart';
 import 'package:sudoku/src/modules/reminder/presentation/bloc/reminder_cubit.dart';
@@ -39,6 +43,12 @@ class SudokuApp extends StatelessWidget {
             ),
             BlocProvider(
               create: (_) => ReminderCubit(getIt<ReminderService>())..load(),
+            ),
+            BlocProvider(
+              create: (_) => AuthCubit(getIt<AuthService>())..restore(),
+            ),
+            BlocProvider(
+              create: (_) => SubmitCubit(getIt<SubmitSolutionUseCase>()),
             ),
           ],
           child: const MainScreen(),

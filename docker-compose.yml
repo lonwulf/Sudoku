@@ -12,6 +12,8 @@ services:
       - .env
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      # Must equal the "iss" claim in the app's tokens, so it uses the same address the phone does
+      OAUTH2_ISSUER_URI: http://${KEYCLOAK_HOST:-localhost}:8180/realms/sudoku
 #      SPRING_REDIS_HOST: redis
 #      SPRING_REDIS_PORT: 6379
     depends_on:
@@ -35,6 +37,22 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+
+  # Dev-only identity provider: realm "sudoku", client "sudoku-mobile", users player/player and
+  # admin/admin (console admin/admin at :8180). Set KEYCLOAK_HOST to this machine's LAN IP so a
+  # phone, the backend container and the token issuer all agree on one address.
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0.7
+    container_name: sudoku-keycloak
+    command: ["start-dev", "--import-realm"]
+    ports:
+      - "8180:8080"
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: http://${KEYCLOAK_HOST:-localhost}:8180
+    volumes:
+      - ./keycloak/sudoku-realm.json:/opt/keycloak/data/import/sudoku-realm.json:ro
 
 volumes:
   redis_data:

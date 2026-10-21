@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sudoku/src/core/util/generic_result_state.dart';
 import 'package:sudoku/src/core/util/logger_service.dart';
 import 'package:sudoku/src/core/util/network_monitor.dart';
+import 'package:sudoku/src/modules/game/domain/model/difficulty.dart';
 import 'package:sudoku/src/modules/game/domain/model/sudoku_game_model.dart';
 import 'package:sudoku/src/modules/game/domain/usecase/main_use_case.dart';
 
@@ -14,6 +15,9 @@ class MainBloc extends Cubit<GenericResultState<SudokuGameModel>> {
   final MainUseCase useCase;
   final NetworkMonitor networkMonitor;
   late final StreamSubscription<bool> networkSubscription;
+
+  /// Used for the next puzzle, including retries and reconnects.
+  Difficulty difficulty = Difficulty.medium;
 
   /// Last known connectivity; null until the first check or change.
   bool? isOnline;
@@ -39,7 +43,9 @@ class MainBloc extends Cubit<GenericResultState<SudokuGameModel>> {
     }
   }
 
-  Future<void> fetchSudokuChallenge() async {
+  /// Loads a new puzzle, at [difficulty] if given, else the last one used.
+  Future<void> fetchSudokuChallenge({Difficulty? difficulty}) async {
+    if (difficulty != null) this.difficulty = difficulty;
     emit(Loading());
     try {
       final online = await networkMonitor.isConnected();
@@ -49,7 +55,7 @@ class MainBloc extends Cubit<GenericResultState<SudokuGameModel>> {
         emit(const Failure(noConnectionMessage));
         return;
       }
-      final result = await useCase.invoke();
+      final result = await useCase.invoke(this.difficulty);
       if (isClosed) return;
       if (result.isSuccessful) {
         _history.clear();
@@ -63,9 +69,12 @@ class MainBloc extends Cubit<GenericResultState<SudokuGameModel>> {
     }
   }
 
+  /// The board being played; null while loading, failed, or once solved,
+  /// so a solved board can't be changed.
   SudokuGameModel? get _model {
     final current = state;
-    return current is Success<SudokuGameModel> ? current.value : null;
+    final model = current is Success<SudokuGameModel> ? current.value : null;
+    return model == null || model.isSolved ? null : model;
   }
 
   /// Emits [next] and remembers the current board so it can be undone.

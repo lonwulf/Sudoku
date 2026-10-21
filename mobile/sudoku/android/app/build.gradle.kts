@@ -40,6 +40,8 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        // Scheme of AppConfig.oidcRedirectUrl, so the Keycloak login returns to the app
+        manifestPlaceholders += mapOf("appAuthRedirectScheme" to "com.lonwulf.labs.sudoku")
     }
 
     signingConfigs {

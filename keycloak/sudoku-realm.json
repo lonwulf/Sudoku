@@ -1,0 +1,108 @@
+{
+  "realm": "sudoku",
+  "enabled": true,
+  "registrationAllowed": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "roles": {
+    "realm": [
+      {
+        "name": "offline_access",
+        "description": "${role_offline-access}"
+      },
+      {
+        "name": "uma_authorization",
+        "description": "${role_uma_authorization}"
+      },
+      {
+        "name": "user",
+        "description": "Player"
+      },
+      {
+        "name": "admin",
+        "description": "Can shadow-ban players and read the audit log"
+      },
+      {
+        "name": "default-roles-sudoku",
+        "description": "Given to every new player",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "offline_access",
+            "uma_authorization",
+            "user"
+          ]
+        }
+      }
+    ]
+  },
+  "defaultRole": {
+    "name": "default-roles-sudoku",
+    "composite": true,
+    "composites": {
+      "realm": [
+        "offline_access",
+        "uma_authorization",
+        "user"
+      ]
+    }
+  },
+  "clients": [
+    {
+      "clientId": "sudoku-mobile",
+      "name": "Sudoku mobile app",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": [
+        "com.lonwulf.labs.sudoku:/oauthredirect"
+      ],
+      "webOrigins": [],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "com.lonwulf.labs.sudoku:/oauthredirect"
+      }
+    }
+  ],
+  "users": [
+    {
+      "username": "player",
+      "enabled": true,
+      "email": "player@example.com",
+      "emailVerified": true,
+      "firstName": "Test",
+      "lastName": "Player",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "player",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "default-roles-sudoku"
+      ]
+    },
+    {
+      "username": "admin",
+      "enabled": true,
+      "email": "admin@example.com",
+      "emailVerified": true,
+      "firstName": "Test",
+      "lastName": "Admin",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "default-roles-sudoku",
+        "admin"
+      ]
+    }
+  ]
+}

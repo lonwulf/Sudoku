@@ -3,8 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:sudoku/src/core/util/generic_result_state.dart';
+import 'package:sudoku/src/modules/auth/presentation/bloc/auth_cubit.dart';
+import 'package:sudoku/src/modules/auth/presentation/components/account_button.dart';
+import 'package:sudoku/src/modules/game/domain/model/difficulty.dart';
+import 'package:sudoku/src/modules/game/domain/model/submit_outcome.dart';
 import 'package:sudoku/src/modules/game/domain/model/sudoku_game_model.dart';
 import 'package:sudoku/src/modules/game/presentation/bloc/main_bloc.dart';
+import 'package:sudoku/src/modules/game/presentation/bloc/submit_cubit.dart';
+import 'package:sudoku/src/modules/game/presentation/components/completion_panel.dart';
 import 'package:sudoku/src/modules/game/presentation/components/game_timer.dart';
 import 'package:sudoku/src/modules/game/presentation/components/number_pad_widget.dart';
 import 'package:sudoku/src/modules/game/presentation/components/sudoku_grid.dart';
@@ -75,25 +81,112 @@ class _MainScreenState extends State<MainScreen> {
               onPressed: () => setState(() => paused = !paused),
             ),
           ),
+          Semantics(
+            button: true,
+            label: 'New game',
+            excludeSemantics: true,
+            child: PlatformIconButton(
+              icon: Icon(
+                context.platformIcon(
+                  material: Icons.add_box_outlined,
+                  cupertino: CupertinoIcons.plus_square,
+                ),
+                color: GameColors.onBackground,
+              ),
+              onPressed: chooseNewGame,
+            ),
+          ),
           const ReminderButton(),
+          const AccountButton(),
         ],
       ),
       body: SafeArea(
-        child: BlocBuilder<MainBloc, GenericResultState<SudokuGameModel>>(
-          builder: (context, state) {
-            if (state is Loading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is Failure<SudokuGameModel>) {
-              return buildError(state.msg);
-            } else if (state is Success<SudokuGameModel>) {
-              final model = state.value;
-              return buildContent(model!);
-            }
-            return const SizedBox.shrink();
-          },
+        child: MultiBlocListener(
+          listeners: [
+            BlocListener<MainBloc, GenericResultState<SudokuGameModel>>(
+              listener: onGameChanged,
+            ),
+            // Signing in from the completion panel saves the score.
+            BlocListener<AuthCubit, AuthState>(
+              listenWhen: (previous, current) =>
+                  !previous.signedIn && current.signedIn,
+              listener: (context, _) {
+                final submit = context.read<SubmitCubit>();
+                final state = submit.state;
+                if (state is Submitted && state.outcome is SignInRequired) {
+                  submit.retry();
+                }
+              },
+            ),
+          ],
+          child: BlocBuilder<MainBloc, GenericResultState<SudokuGameModel>>(
+            builder: (context, state) {
+              if (state is Loading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is Failure<SudokuGameModel>) {
+                return buildError(state.msg);
+              } else if (state is Success<SudokuGameModel>) {
+                final model = state.value;
+                return buildContent(model!);
+              }
+              return const SizedBox.shrink();
+            },
+          ),
         ),
       ),
     );
+  }
+
+  /// Scores a puzzle the moment it is solved; a new puzzle starts afresh.
+  void onGameChanged(
+    BuildContext context,
+    GenericResultState<SudokuGameModel> state,
+  ) {
+    final submit = context.read<SubmitCubit>();
+    if (state is Loading) {
+      submit.reset();
+      setState(() {
+        notesMode = false;
+        selectedCell = null;
+      });
+    } else if (state is Success<SudokuGameModel> &&
+        state.value!.isSolved &&
+        submit.state is SubmitIdle) {
+      submit.submit(state.value!);
+    }
+  }
+
+  /// Asks for a difficulty, warning when it would abandon a puzzle.
+  Future<void> chooseNewGame() async {
+    final bloc = context.read<MainBloc>();
+    final state = bloc.state;
+    final model = state is Success<SudokuGameModel> ? state.value : null;
+    final inProgress = model != null && !model.isSolved && bloc.canUndo;
+    final difficulty = await showPlatformDialog<Difficulty>(
+      context: context,
+      builder: (dialogContext) => PlatformAlertDialog(
+        title: const Text('New game'),
+        content: Text(
+          inProgress
+              ? 'Choose a difficulty. Your current puzzle will be lost.'
+              : 'Choose a difficulty.',
+        ),
+        actions: [
+          for (final level in Difficulty.values)
+            PlatformDialogAction(
+              onPressed: () => Navigator.of(dialogContext).pop(level),
+              child: Text(level.label),
+            ),
+          PlatformDialogAction(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+    if (difficulty == null || !mounted) return;
+    setState(() => paused = false);
+    await bloc.fetchSudokuChallenge(difficulty: difficulty);
   }
 
   Widget buildError(String? msg) {
@@ -136,7 +229,7 @@ class _MainScreenState extends State<MainScreen> {
           child: Center(
             // Keeps the per-second timer repaint from repainting the board.
             child: RepaintBoundary(
-              child: paused
+              child: paused && !model.isSolved
                   ? buildPausedBoard()
                   : SudokuGrid(
                       model: model,
@@ -148,31 +241,34 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ),
         const SizedBox(height: 20),
-        IgnorePointer(
-          ignoring: paused,
-          child: Opacity(
-            opacity: paused ? 0.4 : 1,
-            child: Column(
-              children: [
-                NumberPad(
-                  selectedValue: selectedValue(model),
-                  onNumber: (number) {
-                    final cell = selectedCell;
-                    if (cell == null) return;
-                    final bloc = context.read<MainBloc>();
-                    if (notesMode) {
-                      bloc.toggleNote(cell ~/ 9, cell % 9, number);
-                    } else {
-                      bloc.enterNumber(cell ~/ 9, cell % 9, number);
-                    }
-                  },
-                ),
-                const SizedBox(height: 20),
-                buildBottomActions(model),
-              ],
+        if (model.isSolved)
+          CompletionPanel(onNewGame: chooseNewGame)
+        else
+          IgnorePointer(
+            ignoring: paused,
+            child: Opacity(
+              opacity: paused ? 0.4 : 1,
+              child: Column(
+                children: [
+                  NumberPad(
+                    selectedValue: selectedValue(model),
+                    onNumber: (number) {
+                      final cell = selectedCell;
+                      if (cell == null) return;
+                      final bloc = context.read<MainBloc>();
+                      if (notesMode) {
+                        bloc.toggleNote(cell ~/ 9, cell % 9, number);
+                      } else {
+                        bloc.enterNumber(cell ~/ 9, cell % 9, number);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  buildBottomActions(model),
+                ],
+              ),
             ),
           ),
-        ),
         const SizedBox(height: 20),
       ],
     );
@@ -211,7 +307,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget buildTimer(SudokuGameModel model) {
     return GameTimer(
       key: ValueKey(model.id),
-      paused: paused,
+      paused: paused || model.isSolved,
       style: const TextStyle(
         color: GameColors.onBackground,
         fontSize: 48,
