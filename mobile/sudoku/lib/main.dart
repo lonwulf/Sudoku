@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:sudoku/src/app/startup_error_app.dart';
 import 'package:sudoku/src/app/sudoku_app.dart';
 import 'package:sudoku/src/config/app_config.dart';
 import 'package:sudoku/src/di/core_module.dart';
@@ -18,9 +19,18 @@ Future<void> main() async {
 }
 
 Future<void> _startApp() async {
-  AppConfig.validate();
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  setupNetworkDependencies();
-  setupGameModuleDependencies();
+  try {
+    AppConfig.validate();
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    setupNetworkDependencies();
+    setupGameModuleDependencies();
+  } catch (error, stackTrace) {
+    // Without this, a startup failure never reaches runApp and leaves a
+    // black screen.
+    debugPrint('Startup failed: $error\n$stackTrace');
+    await Sentry.captureException(error, stackTrace: stackTrace);
+    runApp(StartupErrorApp(error: error));
+    return;
+  }
   runApp(const SudokuApp());
 }
