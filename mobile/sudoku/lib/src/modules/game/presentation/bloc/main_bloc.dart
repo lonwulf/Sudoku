@@ -23,4 +23,12 @@ class MainBloc extends Cubit<GenericResultState<SudokuGameModel>> {
       emit(Error("Unexpected error: ${e.toString()}"));
     }
   }
+
+  void enterNumber(int row, int col, int number) {
+    final current = state;
+    if (current is! Success<SudokuGameModel>) return;
+    final model = current.value;
+    if (model == null || model.isGiven(row, col)) return;
+    emit(Success(model.withCell(row, col, number)));
+  }
 }

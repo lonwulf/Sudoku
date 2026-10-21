@@ -154,7 +154,8 @@ class _MainScreenState extends State<MainScreen> {
                   children: List.generate(9, (col) {
                     int cellIndex = row * 9 + col;
                     bool isSelected = selectedCell == cellIndex;
-                    final cells = model.puzzle[row][col];
+                    final cells = model.board[row][col];
+                    final isGiven = model.isGiven(row, col);
                     bool isHighlighted = model.puzzle[row][col] == 9;
                     bool isError =
                         model.puzzle[row][col] == 9 && row == 4 && col == 3;
@@ -187,10 +188,14 @@ class _MainScreenState extends State<MainScreen> {
                                     fit: BoxFit.scaleDown,
                                     child: Text(
                                       '$cells',
-                                      style: const TextStyle(
-                                        color: Colors.white,
+                                      style: TextStyle(
+                                        color: isGiven
+                                            ? Colors.white
+                                            : const Color(0xFF9FB4FF),
                                         fontSize: 18,
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: isGiven
+                                            ? FontWeight.w600
+                                            : FontWeight.w400,
                                       ),
                                     ),
                                   )
@@ -275,12 +280,13 @@ class _MainScreenState extends State<MainScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 2),
               child: GestureDetector(
                 onTap: () {
-                  if (selectedCell != null) {
-                    setState(() {
-                      int row = selectedCell! ~/ 9;
-                      int column = selectedCell! % 9;
-                      model.puzzle[row][column] = number;
-                    });
+                  final cell = selectedCell;
+                  if (cell != null) {
+                    context.read<MainBloc>().enterNumber(
+                      cell ~/ 9,
+                      cell % 9,
+                      number,
+                    );
                   }
                 },
                 child: Container(

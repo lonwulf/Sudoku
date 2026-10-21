@@ -27,6 +27,8 @@ const testSolution = [
 SudokuGameModel testGame() => SudokuGameModel(
   id: 'test',
   difficulty: 'medium',
-  puzzle: [for (final row in testPuzzle) [...row]],
+  puzzle: [
+    for (final row in testPuzzle) [...row],
+  ],
   solution: testSolution,
 );
