@@ -1,5 +1,6 @@
 package com.lonwulf.sudoku.web;
 
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -27,6 +28,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<Object> handleNotFound(NoSuchElementException ex, WebRequest request) {
         return handleExceptionInternal(ex, errorBody("Not found"), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
+    // e.g. Redis or the database is unreachable: a temporary outage, not a bug
+    @ExceptionHandler(DataAccessResourceFailureException.class)
+    public ResponseEntity<Object> handleUnavailable(DataAccessResourceFailureException ex, WebRequest request) {
+        logger.error("Backing store unavailable", ex);
+        return handleExceptionInternal(ex, errorBody("Service temporarily unavailable, please retry"),
+                new HttpHeaders(), HttpStatus.SERVICE_UNAVAILABLE, request);
     }
 
     @Override
