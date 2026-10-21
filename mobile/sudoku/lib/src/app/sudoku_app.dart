@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:sudoku/src/core/util/network_monitor.dart';
 import 'package:sudoku/src/di/constant.dart';
 import 'package:sudoku/src/modules/game/domain/usecase/main_use_case.dart';
 import 'package:sudoku/src/modules/game/presentation/bloc/main_bloc.dart';
@@ -29,7 +30,8 @@ class SudokuApp extends StatelessWidget {
         material: (_, __) => MaterialAppData(theme: buildMaterialTheme()),
         cupertino: (_, __) => CupertinoAppData(theme: buildCupertinoTheme()),
         home: BlocProvider(
-          create: (_) => MainBloc(getIt<MainUseCase>()),
+          create: (_) =>
+              MainBloc(getIt<MainUseCase>(), getIt<NetworkMonitor>()),
           child: const MainScreen(),
         ),
       ),

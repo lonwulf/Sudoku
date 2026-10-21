@@ -1,23 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sudoku/src/core/util/generic_use_case_result.dart';
-import 'package:sudoku/src/modules/game/domain/model/sudoku_game_model.dart';
-import 'package:sudoku/src/modules/game/domain/repository/main_repository.dart';
-import 'package:sudoku/src/modules/game/domain/usecase/main_use_case.dart';
-import 'package:sudoku/src/modules/game/presentation/bloc/main_bloc.dart';
 import 'package:sudoku/src/modules/game/presentation/screens/main_screen.dart';
 
 import 'fixtures.dart';
-
-class _FakeUseCase implements MainUseCase {
-  @override
-  MainRepository get repository => throw UnimplementedError();
-
-  @override
-  Future<GenericUseCaseResult<SudokuGameModel?>> invoke() async =>
-      GenericUseCaseResult(value: testGame(), isSuccessful: true);
-}
 
 void main() {
   testWidgets('shows the puzzle difficulty and a running timer', (
@@ -26,7 +12,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: BlocProvider(
-          create: (_) => MainBloc(_FakeUseCase()),
+          create: (_) => testBloc(),
           child: const MainScreen(),
         ),
       ),
@@ -43,7 +29,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: BlocProvider(
-          create: (_) => MainBloc(_FakeUseCase()),
+          create: (_) => testBloc(),
           child: const MainScreen(),
         ),
       ),
@@ -76,7 +62,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: BlocProvider(
-            create: (_) => MainBloc(_FakeUseCase()),
+            create: (_) => testBloc(),
             child: const MainScreen(),
           ),
         ),

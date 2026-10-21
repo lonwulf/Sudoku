@@ -2,10 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:sudoku/src/config/app_config.dart';
+import 'package:sudoku/src/core/util/network_monitor.dart';
 
 import 'constant.dart';
 
 void setupNetworkDependencies() {
+  getIt.registerLazySingleton<NetworkMonitor>(() => NetworkMonitor());
   getIt.registerLazySingleton<Dio>(() => provideDioClient());
 }
 
