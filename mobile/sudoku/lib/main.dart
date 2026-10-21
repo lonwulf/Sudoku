@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:sudoku/src/app/sudoku_app.dart';
+import 'package:sudoku/src/config/app_config.dart';
 import 'package:sudoku/src/core/util/logger_service.dart';
 import 'package:sudoku/src/di/core_module.dart';
 import 'package:sudoku/src/modules/game/di/game_module.dart';
@@ -13,14 +13,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  try {
-    await dotenv.load(fileName: ".env");
-    debugPrint("✅ Env loaded: ${dotenv.env}");
-  } catch (e) {
-    // await dotenv.load(fileName: "mobile/.env");
-    debugPrint("❌ Failed to load .env: $e");
-    throw StateError('This is test exception');
-  }
+  AppConfig.validate();
   await setupNetworkDependencies();
   await setupGameModuleDependencies();
   // debugPrint("🚀 Starting app without Sentry");
@@ -28,7 +21,7 @@ Future<void> main() async {
   runZonedGuarded(
     () {
       return SentryFlutter.init((options) {
-        options.dsn = dotenv.env['SENTRY_DSN'];
+        options.dsn = AppConfig.sentryDsn;
         options.tracesSampleRate = 1.0;
       }, appRunner: () => runApp(const SudokuApp()));
     },

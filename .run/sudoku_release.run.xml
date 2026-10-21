@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="sudoku (release)" type="FlutterRunConfigurationType" factoryName="Flutter">
+    <option name="additionalArgs" value="--release --dart-define-from-file=config/release.json" />
+    <option name="filePath" value="$PROJECT_DIR$/mobile/sudoku/lib/main.dart" />
+    <method v="2" />
+  </configuration>
+</component>

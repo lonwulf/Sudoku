@@ -1,0 +1,6 @@
+{
+  "APP_ENV": "debug",
+  "API_BASE_URL": "http://<your-lan-ip>:8080",
+  "API_VERSION": "/api/v1",
+  "SENTRY_DSN": ""
+}

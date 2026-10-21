@@ -1,16 +1,25 @@
 # sudoku
 
-A new Flutter project.
+Sudoku mobile app (Flutter).
 
-## Getting Started
+## Configuration
 
-This project is a starting point for a Flutter application.
+Settings are passed at build time with `--dart-define-from-file`. Each build
+type has its own file in `config/`, which is git-ignored:
 
-A few resources to get you started if this is your first Flutter project:
+| File                   | Used for                 | `API_BASE_URL`              |
+|------------------------|--------------------------|-----------------------------|
+| `config/debug.json`    | `flutter run` (debug)    | Local backend, http allowed |
+| `config/release.json`  | release builds           | Production, https required  |
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Copy `config/example.json` to create them. Keys: `APP_ENV`, `API_BASE_URL`,
+`API_VERSION`, `SENTRY_DSN`.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```sh
+flutter run --dart-define-from-file=config/debug.json
+flutter run --release --dart-define-from-file=config/release.json
+flutter build appbundle --dart-define-from-file=config/release.json
+```
+
+In Android Studio, use the shared **sudoku (debug)** and **sudoku (release)**
+run configurations (`/.run` at the repository root).

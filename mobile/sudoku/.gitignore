@@ -47,3 +47,7 @@ app.*.map.json
 sentry.properties
 
 sentry-wizard
+# Build-time configuration (see config/example.json)
+.env
+/config/*.json
+!/config/example.json
