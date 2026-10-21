@@ -5,7 +5,7 @@ class APIResult<T> {
   final int? code;
   final String? msg;
   final HttpResult? httpResult;
-  final APIStatus? status;
+  final APIStatus status;
 
   APIResult._({
     this.result,
@@ -18,8 +18,6 @@ class APIResult<T> {
   factory APIResult.success(T result) =>
       APIResult._(status: APIStatus.success, result: result);
 
-  factory APIResult.loading() => APIResult._(status: APIStatus.loading);
-
   factory APIResult.error({int? code, String? msg, HttpResult? httpResult}) =>
       APIResult._(
         status: APIStatus.error,
@@ -31,14 +29,10 @@ class APIResult<T> {
   @override
   String toString() {
     switch (status) {
-      case APIStatus.loading:
-        return 'Loading';
       case APIStatus.success:
         return 'Success [data = $result]';
       case APIStatus.error:
         return 'Error [code = $code, msg = $msg, httpResult = $httpResult]';
-      case null:
-        return 'null';
     }
   }
 }

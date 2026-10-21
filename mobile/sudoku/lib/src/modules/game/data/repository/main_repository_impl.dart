@@ -14,18 +14,10 @@ class MainRepositoryImpl extends MainRepository {
   Future<APIResult<SudokuGameModel>> fetchChallenge() async {
     final response = await remoteDataSource.fetchChallenge();
     switch (response.status) {
-      case APIStatus.loading:
-        return APIResult.loading();
       case APIStatus.success:
         final result = response.result!.toDomainModel();
         return APIResult.success(result);
       case APIStatus.error:
-        return APIResult.error(
-          code: response.code,
-          msg: response.msg,
-          httpResult: response.httpResult,
-        );
-      case null:
         return APIResult.error(
           code: response.code,
           msg: response.msg,

@@ -6,13 +6,13 @@ import 'package:sudoku/src/modules/game/data/source/sudoku_remote_data_source.da
 import 'package:sudoku/src/modules/game/domain/repository/main_repository.dart';
 import 'package:sudoku/src/modules/game/domain/usecase/main_use_case.dart';
 
-Future<void> setupGameModuleDependencies() async {
+void setupGameModuleDependencies() {
   getIt.registerLazySingleton<GameAPIService>(
     () => GameAPIServiceImpl(getIt<Dio>()),
   );
 
-  getIt.registerSingleton<SudokuRemoteDataSource>(
-    SudokuRemoteDataSource(getIt<GameAPIService>()),
+  getIt.registerLazySingleton<SudokuRemoteDataSource>(
+    () => SudokuRemoteDataSource(getIt<GameAPIService>()),
   );
 
   getIt.registerLazySingleton<MainRepository>(

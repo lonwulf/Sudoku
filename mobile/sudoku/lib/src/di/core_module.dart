@@ -5,7 +5,7 @@ import 'package:sudoku/src/config/app_config.dart';
 
 import 'constant.dart';
 
-Future<void> setupNetworkDependencies() async {
+void setupNetworkDependencies() {
   getIt.registerLazySingleton<Dio>(() => provideDioClient());
 }
 

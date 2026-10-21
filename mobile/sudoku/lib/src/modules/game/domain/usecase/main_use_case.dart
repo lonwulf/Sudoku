@@ -22,8 +22,6 @@ class MainUseCase {
           isSuccessful: false,
           msg: result.msg ?? 'Something went wrong',
         );
-      default:
-        return GenericUseCaseResult(value: null, isSuccessful: false);
     }
   }
 }

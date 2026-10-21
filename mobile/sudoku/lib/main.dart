@@ -20,7 +20,7 @@ Future<void> main() async {
 Future<void> _startApp() async {
   AppConfig.validate();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  await setupNetworkDependencies();
-  await setupGameModuleDependencies();
+  setupNetworkDependencies();
+  setupGameModuleDependencies();
   runApp(const SudokuApp());
 }
