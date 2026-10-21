@@ -6,6 +6,8 @@ import com.lonwulf.sudoku.data.repository.ILeaderboardAuditLogRepository;
 import com.lonwulf.sudoku.data.repository.IUserRepository;
 import com.lonwulf.sudoku.service.FraudDetectionService;
 import com.lonwulf.sudoku.service.ScoreService;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -79,7 +81,7 @@ public class LeaderboardAdminController {
     @GetMapping("/audit/recent")
     @PreAuthorize("hasRole('ADMIN')")
     public List<LeaderboardAuditLog> getRecentAuditLogs(
-            @RequestParam(defaultValue = "50") int limit) {
+            @RequestParam(defaultValue = "50") @Min(1) @Max(200) int limit) {
         return leaderboardAuditLogRepository
                 .findAll(PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "timestamp")))
                 .getContent();
