@@ -67,7 +67,7 @@ class _MainScreenState extends State<MainScreen> {
           builder: (context, state) {
             if (state is Loading) {
               return const Center(child: CircularProgressIndicator());
-            } else if (state is Error<SudokuGameModel>) {
+            } else if (state is Failure<SudokuGameModel>) {
               return buildError(state.msg);
             } else if (state is Success<SudokuGameModel>) {
               final model = state.value;

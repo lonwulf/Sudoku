@@ -11,9 +11,9 @@ final class Success<T> extends GenericResultState<T> {
   const Success([this.value]);
 }
 
-final class Error<T> extends GenericResultState<T> {
+final class Failure<T> extends GenericResultState<T> {
   final String? msg;
-  const Error([this.msg]);
+  const Failure([this.msg]);
 }
 
 final class Empty<T> extends GenericResultState<T> {

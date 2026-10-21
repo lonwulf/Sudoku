@@ -16,11 +16,11 @@ class MainBloc extends Cubit<GenericResultState<SudokuGameModel>> {
       if (result.isSuccessful) {
         emit(Success(result.value));
       } else {
-        emit(Error(result.msg));
+        emit(Failure(result.msg));
       }
     } catch (e) {
       LoggerService.logError(e);
-      emit(Error("Unexpected error: ${e.toString()}"));
+      emit(Failure("Unexpected error: ${e.toString()}"));
     }
   }
 
