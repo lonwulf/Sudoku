@@ -35,10 +35,22 @@ class SudokuGameModel extends Equatable {
 
   Set<int> notesAt(int row, int col) => notes[row * 9 + col];
 
+  /// Every cell matches the solution.
+  bool get isSolved {
+    for (var row = 0; row < 9; row++) {
+      for (var col = 0; col < 9; col++) {
+        if (!isCorrect(row, col)) return false;
+      }
+    }
+    return true;
+  }
+
   /// Sets a cell's value, clearing its notes. A non-zero value is also
   /// removed from the notes of every cell in the same row, column and box.
   SudokuGameModel withCell(int row, int col, int value) {
-    final nextBoard = [for (final cells in board) [...cells]];
+    final nextBoard = [
+      for (final cells in board) [...cells],
+    ];
     nextBoard[row][col] = value;
 
     final nextNotes = [...notes];
@@ -78,17 +90,15 @@ class SudokuGameModel extends Equatable {
     return null;
   }
 
-  SudokuGameModel _copyWith({
-    List<List<int>>? board,
-    List<Set<int>>? notes,
-  }) => SudokuGameModel(
-    id: id,
-    difficulty: difficulty,
-    puzzle: puzzle,
-    solution: solution,
-    board: board ?? this.board,
-    notes: notes ?? this.notes,
-  );
+  SudokuGameModel _copyWith({List<List<int>>? board, List<Set<int>>? notes}) =>
+      SudokuGameModel(
+        id: id,
+        difficulty: difficulty,
+        puzzle: puzzle,
+        solution: solution,
+        board: board ?? this.board,
+        notes: notes ?? this.notes,
+      );
 
   static bool _isPeer(int row, int col, int otherRow, int otherCol) =>
       row == otherRow ||

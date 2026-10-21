@@ -2,5 +2,7 @@
   "APP_ENV": "debug",
   "API_BASE_URL": "http://<your-lan-ip>:8080",
   "API_VERSION": "/api/v1",
+  "OIDC_ISSUER": "http://<your-lan-ip>:8180/realms/sudoku",
+  "OIDC_CLIENT_ID": "sudoku-mobile",
   "SENTRY_DSN": ""
 }

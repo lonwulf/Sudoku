@@ -2,10 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sudoku/src/core/util/api_result.dart';
 import 'package:sudoku/src/core/util/api_status.dart';
+import 'package:sudoku/src/modules/game/data/response/submission_result_dto.dart';
 import 'package:sudoku/src/modules/game/data/response/sudoku_game_dto.dart';
 import 'package:sudoku/src/modules/game/data/source/game_api_service.dart';
 import 'package:sudoku/src/modules/game/data/source/sudoku_remote_data_source.dart';
 import 'package:sudoku/src/modules/game/domain/mapper/sudoku_puzzle_mapper.dart';
+import 'package:sudoku/src/modules/game/domain/model/difficulty.dart';
+import 'package:sudoku/src/modules/game/domain/model/submission_result.dart';
 import 'package:sudoku/src/modules/game/domain/model/sudoku_game_model.dart';
 import 'package:sudoku/src/modules/game/domain/repository/main_repository.dart';
 import 'package:sudoku/src/modules/game/domain/usecase/main_use_case.dart';
@@ -18,7 +21,13 @@ class _FakeApiService implements GameAPIService {
   _FakeApiService(this.handler);
 
   @override
-  Future<SudokuGameDTO> getSudokuChallenge() => handler();
+  Future<SudokuGameDTO> getSudokuChallenge(String difficulty) => handler();
+
+  @override
+  Future<SubmissionResultDTO> submitSolution(
+    String id,
+    List<List<int>> board,
+  ) => throw UnimplementedError();
 }
 
 class _FakeRepository implements MainRepository {
@@ -27,7 +36,15 @@ class _FakeRepository implements MainRepository {
   _FakeRepository(this.result);
 
   @override
-  Future<APIResult<SudokuGameModel>> fetchChallenge() async => result;
+  Future<APIResult<SudokuGameModel>> fetchChallenge(
+    Difficulty difficulty,
+  ) async => result;
+
+  @override
+  Future<APIResult<SubmissionResult>> submitSolution(
+    String id,
+    List<List<int>> board,
+  ) => throw UnimplementedError();
 }
 
 DioException _httpError(int status, Object? data) {
@@ -70,7 +87,7 @@ void main() {
         _FakeApiService(() async => SudokuGameDTO('id', 'easy', null, null)),
       );
 
-      final result = await source.fetchChallenge();
+      final result = await source.fetchChallenge('medium');
 
       expect(result.status, APIStatus.success);
       expect(result.result?.id, 'id');
@@ -81,7 +98,7 @@ void main() {
         _FakeApiService(() => throw _httpError(404, {'message': 'Not found'})),
       );
 
-      final result = await source.fetchChallenge();
+      final result = await source.fetchChallenge('medium');
 
       expect(result.status, APIStatus.error);
       expect(result.code, 404);
@@ -94,7 +111,7 @@ void main() {
         _FakeApiService(() => throw _httpError(503, null)),
       );
 
-      final result = await source.fetchChallenge();
+      final result = await source.fetchChallenge('medium');
 
       expect(result.code, 503);
       expect(result.httpResult, HttpResult.serverError);
@@ -107,7 +124,7 @@ void main() {
         _FakeRepository(APIResult.success(testGame())),
       );
 
-      final result = await useCase.invoke();
+      final result = await useCase.invoke(Difficulty.medium);
 
       expect(result.isSuccessful, isTrue);
       expect(result.value, testGame());
@@ -118,7 +135,7 @@ void main() {
         _FakeRepository(APIResult.error(code: 500, msg: 'Server down')),
       );
 
-      final result = await useCase.invoke();
+      final result = await useCase.invoke(Difficulty.medium);
 
       expect(result.isSuccessful, isFalse);
       expect(result.value, isNull);

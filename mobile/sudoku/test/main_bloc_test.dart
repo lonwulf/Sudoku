@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sudoku/src/core/util/generic_result_state.dart';
+import 'package:sudoku/src/modules/game/domain/model/difficulty.dart';
 import 'package:sudoku/src/modules/game/domain/model/sudoku_game_model.dart';
 import 'package:sudoku/src/modules/game/presentation/bloc/main_bloc.dart';
 
@@ -181,5 +182,40 @@ void main() {
       expect(_model(bloc).board[0][0], 1);
       expect(useCase.calls, 1);
     });
+  });
+
+  group('difficulty', () {
+    test('loads medium until another difficulty is chosen', () async {
+      final useCase = FakeUseCase();
+      final bloc = testBloc(useCase: useCase);
+      addTearDown(bloc.close);
+
+      await bloc.fetchSudokuChallenge();
+      expect(useCase.lastDifficulty, Difficulty.medium);
+
+      await bloc.fetchSudokuChallenge(difficulty: Difficulty.hard);
+      await bloc.fetchSudokuChallenge();
+      expect(useCase.lastDifficulty, Difficulty.hard);
+    });
+  });
+
+  group('solving', () {
+    test(
+      'the last correct number solves the puzzle and locks the board',
+      () async {
+        final bloc = testBloc(useCase: FakeUseCase(game: nearlySolvedGame));
+        addTearDown(bloc.close);
+        await bloc.fetchSudokuChallenge();
+        expect(_model(bloc).isSolved, isFalse);
+
+        bloc.enterNumber(0, 0, 1);
+        expect(_model(bloc).isSolved, isTrue);
+
+        bloc.erase(0, 0);
+        bloc.undo();
+        expect(bloc.hint(null), isNull);
+        expect(_model(bloc).board[0][0], 1);
+      },
+    );
   });
 }

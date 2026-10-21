@@ -6,6 +6,7 @@ import 'package:sudoku/src/app/startup_error_app.dart';
 import 'package:sudoku/src/app/sudoku_app.dart';
 import 'package:sudoku/src/config/app_config.dart';
 import 'package:sudoku/src/di/core_module.dart';
+import 'package:sudoku/src/modules/auth/di/auth_module.dart';
 import 'package:sudoku/src/modules/game/di/game_module.dart';
 import 'package:sudoku/src/modules/reminder/di/reminder_module.dart';
 
@@ -24,6 +25,7 @@ Future<void> _startApp() async {
     AppConfig.validate();
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     setupNetworkDependencies();
+    setupAuthModuleDependencies();
     setupGameModuleDependencies();
     setupReminderModuleDependencies();
   } catch (error, stackTrace) {

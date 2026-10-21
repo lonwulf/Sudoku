@@ -3,12 +3,20 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sudoku/src/core/util/api_result.dart';
 import 'package:sudoku/src/core/util/generic_use_case_result.dart';
 import 'package:sudoku/src/core/util/network_monitor.dart';
+import 'package:sudoku/src/modules/auth/data/auth_service.dart';
+import 'package:sudoku/src/modules/auth/domain/model/auth_user.dart';
+import 'package:sudoku/src/modules/auth/presentation/bloc/auth_cubit.dart';
+import 'package:sudoku/src/modules/game/domain/model/difficulty.dart';
+import 'package:sudoku/src/modules/game/domain/model/submission_result.dart';
 import 'package:sudoku/src/modules/game/domain/model/sudoku_game_model.dart';
 import 'package:sudoku/src/modules/game/domain/repository/main_repository.dart';
 import 'package:sudoku/src/modules/game/domain/usecase/main_use_case.dart';
+import 'package:sudoku/src/modules/game/domain/usecase/submit_solution_use_case.dart';
 import 'package:sudoku/src/modules/game/presentation/bloc/main_bloc.dart';
+import 'package:sudoku/src/modules/game/presentation/bloc/submit_cubit.dart';
 import 'package:sudoku/src/modules/game/presentation/screens/main_screen.dart';
 import 'package:sudoku/src/modules/reminder/data/reminder_service.dart';
 import 'package:sudoku/src/modules/reminder/domain/model/reminder_settings.dart';
@@ -47,16 +55,101 @@ SudokuGameModel testGame() => SudokuGameModel(
   solution: testSolution,
 );
 
+/// Solved except row 1, column 1, whose answer is 1.
+SudokuGameModel nearlySolvedGame() => SudokuGameModel(
+  id: 'nearly',
+  difficulty: 'easy',
+  puzzle: [
+    for (final row in testSolution) [...row],
+  ]..[0][0] = 0,
+  solution: testSolution,
+);
+
+const testUser = AuthUser(id: 'sub-1', name: 'Test Player');
+
 class FakeUseCase implements MainUseCase {
+  final SudokuGameModel Function() game;
   int calls = 0;
+  Difficulty? lastDifficulty;
+
+  FakeUseCase({this.game = testGame});
 
   @override
   MainRepository get repository => throw UnimplementedError();
 
   @override
-  Future<GenericUseCaseResult<SudokuGameModel?>> invoke() async {
+  Future<GenericUseCaseResult<SudokuGameModel?>> invoke(
+    Difficulty difficulty,
+  ) async {
     calls++;
-    return GenericUseCaseResult(value: testGame(), isSuccessful: true);
+    lastDifficulty = difficulty;
+    return GenericUseCaseResult(value: game(), isSuccessful: true);
+  }
+}
+
+class FakeAuthService implements AuthService {
+  AuthUser? user;
+
+  /// Who [signIn] signs in; null acts like the player closing the page.
+  AuthUser? signInAs;
+  int signIns = 0;
+  final _changes = StreamController<AuthUser?>.broadcast();
+
+  FakeAuthService({this.user, this.signInAs = testUser});
+
+  @override
+  AuthUser? get currentUser => user;
+
+  @override
+  Stream<AuthUser?> get userChanges => _changes.stream;
+
+  @override
+  Future<AuthUser?> restore() async => user;
+
+  @override
+  Future<AuthUser?> signIn() async {
+    signIns++;
+    if (signInAs != null) {
+      user = signInAs;
+      _changes.add(user);
+    }
+    return signInAs;
+  }
+
+  @override
+  Future<void> signOut() async {
+    user = null;
+    _changes.add(null);
+  }
+
+  @override
+  Future<String?> accessToken() async => user == null ? null : 'token';
+}
+
+/// Records submits and answers them with [submitResult].
+class FakeMainRepository implements MainRepository {
+  APIResult<SubmissionResult> submitResult;
+  final submitted = <String>[];
+
+  FakeMainRepository({APIResult<SubmissionResult>? submitResult})
+    : submitResult =
+          submitResult ??
+          APIResult.success(
+            const SubmissionResult(score: 40, puzzlesCompleted: 3, rank: 2),
+          );
+
+  @override
+  Future<APIResult<SudokuGameModel>> fetchChallenge(
+    Difficulty difficulty,
+  ) async => APIResult.success(testGame());
+
+  @override
+  Future<APIResult<SubmissionResult>> submitSolution(
+    String id,
+    List<List<int>> board,
+  ) async {
+    submitted.add(id);
+    return submitResult;
   }
 }
 
@@ -114,15 +207,32 @@ class FakeReminderService implements ReminderService {
 }
 
 /// MainScreen with its blocs, as SudokuApp provides them.
-Widget testApp({MainBloc? bloc, ReminderService? reminders}) => MaterialApp(
-  home: MultiBlocProvider(
-    providers: [
-      BlocProvider(create: (_) => bloc ?? testBloc()),
-      BlocProvider(
-        create: (_) =>
-            ReminderCubit(reminders ?? FakeReminderService())..load(),
-      ),
-    ],
-    child: const MainScreen(),
-  ),
-);
+Widget testApp({
+  MainBloc? bloc,
+  ReminderService? reminders,
+  FakeAuthService? auth,
+  FakeMainRepository? repository,
+}) {
+  final authService = auth ?? FakeAuthService();
+  return MaterialApp(
+    home: MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => bloc ?? testBloc()),
+        BlocProvider(
+          create: (_) =>
+              ReminderCubit(reminders ?? FakeReminderService())..load(),
+        ),
+        BlocProvider(create: (_) => AuthCubit(authService)..restore()),
+        BlocProvider(
+          create: (_) => SubmitCubit(
+            SubmitSolutionUseCase(
+              repository ?? FakeMainRepository(),
+              authService,
+            ),
+          ),
+        ),
+      ],
+      child: const MainScreen(),
+    ),
+  );
+}
