@@ -6,8 +6,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class SudokuApplicationTests {
 
-//	@Test
-//	void contextLoads() {
-//	}
+	// also runs the Flyway migrations and Hibernate's schema validation against H2
+	@Test
+	void contextLoads() {
+	}
 
 }

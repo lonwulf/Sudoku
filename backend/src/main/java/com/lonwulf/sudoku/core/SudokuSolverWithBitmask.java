@@ -1,13 +1,22 @@
 package com.lonwulf.sudoku.core;
 
+import java.util.Random;
+
 public class SudokuSolverWithBitmask {
     private final int[][] board;
+    private final Random random; // null = try digits in ascending order
     private final int[] rowMask = new int[9];
     private final int[] colMask = new int[9];
     private final int[] boxMask = new int[9];
 
     public SudokuSolverWithBitmask(int[][] board) {
+        this(board, null);
+    }
+
+    // with a Random, solve() tries candidates in shuffled order so an empty board yields a random grid
+    public SudokuSolverWithBitmask(int[][] board, Random random) {
         this.board = board;
+        this.random = random;
         initMasks();
     }
 
@@ -45,18 +54,31 @@ public class SudokuSolverWithBitmask {
         int used = rowMask[r] | colMask[c] | boxMask[boxIndex(r, c)];
         int available = ~used & 0x1FF; // mask for digits 1–9
 
-        while (available != 0) {
-            int bit = Integer.lowestOneBit(available);
-            int digit = Integer.numberOfTrailingZeros(bit) + 1;
-
+        for (int digit : candidates(available)) {
             place(r, c, digit);
             if (backtrack(nextR, nextC)) return true;
             remove(r, c, digit);
-
-            available &= ~bit; // try next candidate
         }
 
         return false;
+    }
+
+    private int[] candidates(int available) {
+        int[] digits = new int[Integer.bitCount(available)];
+        for (int i = 0; available != 0; i++) {
+            int bit = Integer.lowestOneBit(available);
+            digits[i] = Integer.numberOfTrailingZeros(bit) + 1;
+            available &= ~bit;
+        }
+        if (random != null) {
+            for (int i = digits.length - 1; i > 0; i--) {
+                int j = random.nextInt(i + 1);
+                int tmp = digits[i];
+                digits[i] = digits[j];
+                digits[j] = tmp;
+            }
+        }
+        return digits;
     }
 
     private void place(int r, int c, int digit) {
