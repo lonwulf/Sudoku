@@ -11,7 +11,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IUserRepository extends JpaRepository<User, String> {
-    Slice<User> findByShadowBanned(boolean shadowBanned, Pageable pageable);
+    // Only players who have scored belong on a leaderboard
+    Slice<User> findByShadowBannedAndLifetimeScoreGreaterThan(boolean shadowBanned, int score, Pageable pageable);
+
+    boolean existsByShadowBannedAndLifetimeScoreGreaterThan(boolean shadowBanned, int score);
 
     // A single UPDATE, so concurrent completions by the same user can't lose an increment.
     // Clears the persistence context so a following findById sees the new values.

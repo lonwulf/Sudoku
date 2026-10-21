@@ -1,5 +1,6 @@
 package com.lonwulf.sudoku.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -11,12 +12,15 @@ import java.util.stream.Collectors;
 @Service
 public class SudokuCacheService {
     private final StringRedisTemplate redisTemplate;
+    private final Duration puzzleTtl;
     public static final String PUZZLE_KEY_PREFIX = "sudoku:puzzle:";
     private static final String SOLUTION_FIELD = "solution";
     private static final String DIFFICULTY_FIELD = "difficulty";
 
-    public SudokuCacheService(StringRedisTemplate redisTemplate) {
+    public SudokuCacheService(StringRedisTemplate redisTemplate,
+                              @Value("${sudoku.puzzle-ttl}") Duration puzzleTtl) {
         this.redisTemplate = redisTemplate;
+        this.puzzleTtl = puzzleTtl;
     }
 
     public void savePuzzle(String puzzleId, String difficulty, int[][] solution) {
@@ -25,7 +29,7 @@ public class SudokuCacheService {
                 SOLUTION_FIELD, serialize(solution),
                 DIFFICULTY_FIELD, difficulty
         ));
-        redisTemplate.expire(key, Duration.ofHours(1));//expire in 1 hr
+        redisTemplate.expire(key, puzzleTtl);
     }
 
     public CachedPuzzle getPuzzle(String puzzleId) {

@@ -56,13 +56,14 @@ public class LeaderboardRebuildService {
     }
 
     private void rebuild(String leaderboardKey) {
-        // shadow-banned users only ever belong on the shadow board
+        // shadow-banned users only ever belong on the shadow board, and players without points
+        // on neither: completions are what put a player on a board
         boolean shadowBanned = Constants.SHADOW_LEADERBOARD.equals(leaderboardKey);
         Pageable page = PageRequest.of(0, PAGE_SIZE, Sort.by("id"));
         long total = 0;
         Slice<User> slice;
         do {
-            slice = userRepo.findByShadowBanned(shadowBanned, page);
+            slice = userRepo.findByShadowBannedAndLifetimeScoreGreaterThan(shadowBanned, 0, page);
             Set<ZSetOperations.TypedTuple<String>> entries = slice.stream()
                     .map(u -> ZSetOperations.TypedTuple.of(u.getId(), (double) u.getLifetimeScore()))
                     .collect(Collectors.toSet());
