@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sudoku/src/core/util/api_result.dart';
 import 'package:sudoku/src/core/util/generic_use_case_result.dart';
 import 'package:sudoku/src/core/util/network_monitor.dart';
+import 'package:sudoku/src/di/constant.dart';
 import 'package:sudoku/src/modules/auth/data/auth_service.dart';
 import 'package:sudoku/src/modules/auth/domain/model/auth_user.dart';
 import 'package:sudoku/src/modules/auth/presentation/bloc/auth_cubit.dart';
@@ -17,6 +18,12 @@ import 'package:sudoku/src/modules/game/domain/usecase/main_use_case.dart';
 import 'package:sudoku/src/modules/game/domain/usecase/submit_solution_use_case.dart';
 import 'package:sudoku/src/modules/game/presentation/bloc/main_bloc.dart';
 import 'package:sudoku/src/modules/game/presentation/bloc/submit_cubit.dart';
+import 'package:sudoku/src/modules/leaderboard/domain/model/leaderboard_entry.dart';
+import 'package:sudoku/src/modules/leaderboard/domain/model/leaderboard_page.dart';
+import 'package:sudoku/src/modules/leaderboard/domain/model/player_standing.dart';
+import 'package:sudoku/src/modules/leaderboard/domain/repository/leaderboard_repository.dart';
+import 'package:sudoku/src/modules/leaderboard/domain/usecase/get_leaderboard_use_case.dart';
+import 'package:sudoku/src/modules/leaderboard/domain/usecase/get_my_score_use_case.dart';
 import 'package:sudoku/src/modules/game/presentation/screens/main_screen.dart';
 import 'package:sudoku/src/modules/reminder/data/reminder_service.dart';
 import 'package:sudoku/src/modules/reminder/domain/model/reminder_settings.dart';
@@ -235,4 +242,56 @@ Widget testApp({
       child: const MainScreen(),
     ),
   );
+}
+
+/// Players ranked [from] onwards, with user ids `u1`, `u2`, ...
+List<LeaderboardEntry> testEntries(int from, int count) => [
+  for (var rank = from; rank < from + count; rank++)
+    LeaderboardEntry(
+      rank: rank,
+      userId: 'u$rank',
+      name: 'Player $rank',
+      score: 1000 - rank,
+    ),
+];
+
+const testStanding = PlayerStanding(
+  name: 'Test Player',
+  score: 70,
+  puzzlesCompleted: 4,
+  rank: 3,
+);
+
+/// Answers leaderboard pages from [pages] (missing pages are empty) and
+/// the player's score from [myScore], recording the pages asked for.
+class FakeLeaderboardRepository implements LeaderboardRepository {
+  final Map<int, APIResult<LeaderboardPage>> pages;
+  APIResult<PlayerStanding> myScore;
+  final requestedPages = <int>[];
+
+  FakeLeaderboardRepository({
+    Map<int, APIResult<LeaderboardPage>>? pages,
+    APIResult<PlayerStanding>? myScore,
+  }) : pages = pages ?? {},
+       myScore = myScore ?? APIResult.success(testStanding);
+
+  @override
+  Future<APIResult<LeaderboardPage>> fetchLeaderboard(
+    int page,
+    int size,
+  ) async {
+    requestedPages.add(page);
+    return pages[page] ?? APIResult.success(const LeaderboardPage());
+  }
+
+  @override
+  Future<APIResult<PlayerStanding>> fetchMyScore() async => myScore;
+}
+
+/// What the leaderboard and score screens resolve through getIt when
+/// opened; undo with `getIt.reset()`.
+void registerLeaderboard(FakeLeaderboardRepository repository) {
+  getIt
+    ..registerFactory(() => GetLeaderboardUseCase(repository))
+    ..registerFactory(() => GetMyScoreUseCase(repository));
 }

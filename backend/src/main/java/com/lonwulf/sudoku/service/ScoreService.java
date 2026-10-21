@@ -85,6 +85,24 @@ public class ScoreService {
         );
     }
 
+    // The score comes from the database (the source of truth); the rank is best effort and null
+    // when Redis is down or the player isn't on the board yet
+    public ScoreResponseDTO getStanding(User user) {
+        Long rank = null;
+        try {
+            rank = redisTemplate.opsForZSet().reverseRank(getLeaderboardKey(user), user.getId());
+        } catch (DataAccessException e) {
+            log.warn("Rank lookup failed for {}: {}", user.getId(), e.getMessage());
+        }
+        return new ScoreResponseDTO(
+                user.getId(),
+                user.getDisplayName(),
+                user.getPuzzlesCompleted(),
+                user.getLifetimeScore(),
+                rank != null ? rank + 1 : null
+        );
+    }
+
     private boolean isRedisPopulated(String leaderboardKey) {
         Long size = redisTemplate.opsForZSet().size(leaderboardKey);
         return size != null && size > 0;
