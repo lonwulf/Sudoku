@@ -24,27 +24,34 @@ class NumberPad extends StatelessWidget {
       child: Row(
         children: List.generate(9, (index) {
           final number = index + 1;
+          // The tap target spans the key's whole slot, including the gaps.
           return Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
+            child: Semantics(
+              button: true,
+              label: 'Enter $number',
+              excludeSemantics: true,
               child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
                 onTap: () => onNumber(number),
-                child: Container(
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: number == selectedValue
-                        ? GameColors.accent
-                        : GameColors.background,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Center(
-                    child: Text(
-                      '$number',
-                      style: TextStyle(
-                        color: number == selectedValue
-                            ? GameColors.onAccent
-                            : GameColors.onBackground,
-                        fontWeight: FontWeight.w500,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: Container(
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: number == selectedValue
+                          ? GameColors.accent
+                          : GameColors.background,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$number',
+                        style: TextStyle(
+                          color: number == selectedValue
+                              ? GameColors.onAccent
+                              : GameColors.onBackground,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),

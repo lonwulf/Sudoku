@@ -37,6 +37,34 @@ void main() {
     expect(find.text('00:00'), findsOneWidget);
   });
 
+  testWidgets('cells and keys are labelled and entering a number works', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: BlocProvider(
+          create: (_) => MainBloc(_FakeUseCase()),
+          child: const MainScreen(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.bySemanticsLabel('Row 1, column 2, 2, given'), findsOneWidget);
+
+    await tester.tap(find.bySemanticsLabel('Row 1, column 1, empty'));
+    await tester.tap(find.bySemanticsLabel('Enter 5'));
+    await tester.pump();
+    expect(
+      find.bySemanticsLabel('Row 1, column 1, 5, incorrect'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.bySemanticsLabel('Enter 1'));
+    await tester.pump();
+    expect(find.bySemanticsLabel('Row 1, column 1, 1'), findsOneWidget);
+  });
+
   for (final size in const [Size(320, 568), Size(360, 640), Size(412, 915)]) {
     testWidgets('main screen fits a ${size.width}x${size.height} screen', (
       tester,

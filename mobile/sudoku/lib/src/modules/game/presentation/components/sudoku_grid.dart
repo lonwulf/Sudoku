@@ -89,41 +89,57 @@ class SudokuCell extends StatelessWidget {
     required this.onTap,
   });
 
+  String get semanticLabel {
+    final parts = [
+      'Row ${row + 1}, column ${col + 1}',
+      value == 0 ? 'empty' : '$value',
+      if (isGiven) 'given',
+      if (isError) 'incorrect',
+    ];
+    return parts.join(', ');
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: EdgeInsets.only(
-          right: (col + 1) % 3 == 0 && col != 8 ? 4 : 1,
-          bottom: (row + 1) % 3 == 0 && row != 8 ? 4 : 1,
-        ),
-        decoration: BoxDecoration(
-          color: isError
-              ? GameColors.conflict
-              : isSelected
-              ? GameColors.selected
-              : isHighlighted
-              ? GameColors.highlighted
-              : GameColors.background,
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: Center(
-          child: value != 0
-              ? FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    '$value',
-                    style: TextStyle(
-                      color: isGiven
-                          ? GameColors.onBackground
-                          : GameColors.playerEntry,
-                      fontSize: 18,
-                      fontWeight: isGiven ? FontWeight.w600 : FontWeight.w400,
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      label: semanticLabel,
+      excludeSemantics: true,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          margin: EdgeInsets.only(
+            right: (col + 1) % 3 == 0 && col != 8 ? 4 : 1,
+            bottom: (row + 1) % 3 == 0 && row != 8 ? 4 : 1,
+          ),
+          decoration: BoxDecoration(
+            color: isError
+                ? GameColors.conflict
+                : isSelected
+                ? GameColors.selected
+                : isHighlighted
+                ? GameColors.highlighted
+                : GameColors.background,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Center(
+            child: value != 0
+                ? FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      '$value',
+                      style: TextStyle(
+                        color: isGiven
+                            ? GameColors.onBackground
+                            : GameColors.playerEntry,
+                        fontSize: 18,
+                        fontWeight: isGiven ? FontWeight.w600 : FontWeight.w400,
+                      ),
                     ),
-                  ),
-                )
-              : null,
+                  )
+                : null,
+          ),
         ),
       ),
     );
