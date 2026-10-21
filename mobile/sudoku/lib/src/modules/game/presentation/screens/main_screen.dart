@@ -6,6 +6,8 @@ import 'package:sudoku/src/core/util/generic_result_state.dart';
 import 'package:sudoku/src/modules/game/domain/model/sudoku_game_model.dart';
 import 'package:sudoku/src/modules/game/presentation/bloc/main_bloc.dart';
 import 'package:sudoku/src/modules/game/presentation/components/game_timer.dart';
+import 'package:sudoku/src/modules/game/presentation/components/number_pad_widget.dart';
+import 'package:sudoku/src/modules/game/presentation/components/sudoku_grid.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -110,9 +112,28 @@ class _MainScreenState extends State<MainScreen> {
         const SizedBox(height: 20),
         buildTimer(model),
         const SizedBox(height: 30),
-        Flexible(child: Center(child: buildSudokuGrid(model))),
+        Flexible(
+          child: Center(
+            // Keeps the per-second timer repaint from repainting the board.
+            child: RepaintBoundary(
+              child: SudokuGrid(
+                model: model,
+                selectedCell: selectedCell,
+                onCellTap: (index) => setState(() => selectedCell = index),
+              ),
+            ),
+          ),
+        ),
         const SizedBox(height: 20),
-        buildNumberPad(model),
+        NumberPad(
+          selectedValue: selectedValue(model),
+          onNumber: (number) {
+            final cell = selectedCell;
+            if (cell != null) {
+              context.read<MainBloc>().enterNumber(cell ~/ 9, cell % 9, number);
+            }
+          },
+        ),
         const SizedBox(height: 20),
         buildBottomActions(context),
         const SizedBox(height: 20),
@@ -127,91 +148,6 @@ class _MainScreenState extends State<MainScreen> {
         color: Colors.white,
         fontSize: 48,
         fontWeight: FontWeight.w300,
-      ),
-    );
-  }
-
-  // Cells are sized from the available space so the board fits narrow and
-  // short screens instead of overflowing.
-  Widget buildSudokuGrid(SudokuGameModel model) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: const Color(0xFF1E2940),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            children: List.generate(9, (row) {
-              return Expanded(
-                child: Row(
-                  children: List.generate(9, (col) {
-                    int cellIndex = row * 9 + col;
-                    bool isSelected = selectedCell == cellIndex;
-                    final cells = model.board[row][col];
-                    final isGiven = model.isGiven(row, col);
-                    bool isHighlighted =
-                        !isSelected &&
-                        cells != 0 &&
-                        cells == selectedValue(model);
-                    bool isError =
-                        !isGiven &&
-                        cells != 0 &&
-                        cells != model.solution[row][col];
-
-                    return Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedCell = cellIndex;
-                          });
-                        },
-                        child: Container(
-                          margin: EdgeInsets.only(
-                            right: (col + 1) % 3 == 0 && col != 8 ? 4 : 1,
-                            bottom: (row + 1) % 3 == 0 && row != 8 ? 4 : 1,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isError
-                                ? const Color(0xFF8B4B68)
-                                : isSelected
-                                ? const Color(0xFF4169E1)
-                                : isHighlighted
-                                ? const Color(0xFF4B5B8B)
-                                : const Color(0xFF2C3E5A),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Center(
-                            child: cells != 0
-                                ? FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      '$cells',
-                                      style: TextStyle(
-                                        color: isGiven
-                                            ? Colors.white
-                                            : const Color(0xFF9FB4FF),
-                                        fontSize: 18,
-                                        fontWeight: isGiven
-                                            ? FontWeight.w600
-                                            : FontWeight.w400,
-                                      ),
-                                    ),
-                                  )
-                                : null,
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-                ),
-              );
-            }),
-          ),
-        ),
       ),
     );
   }
@@ -262,55 +198,6 @@ class _MainScreenState extends State<MainScreen> {
           style: const TextStyle(color: Colors.white54, fontSize: 12),
         ),
       ],
-    );
-  }
-
-  Widget buildNumberPad(SudokuGameModel model) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E2940),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: List.generate(9, (index) {
-          int number = index + 1;
-          return Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: GestureDetector(
-                onTap: () {
-                  final cell = selectedCell;
-                  if (cell != null) {
-                    context.read<MainBloc>().enterNumber(
-                      cell ~/ 9,
-                      cell % 9,
-                      number,
-                    );
-                  }
-                },
-                child: Container(
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: number == selectedValue(model)
-                        ? const Color(0xFF4ECDC4)
-                        : const Color(0xFF2C3E5A),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Center(
-                    child: Text(
-                      '$number',
-                      style: const TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
-        }),
-      ),
     );
   }
 }
