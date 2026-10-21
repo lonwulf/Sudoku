@@ -71,19 +71,37 @@ class _MainScreenState extends State<MainScreen> {
           builder: (context, state) {
             if (state is Loading) {
               return const Center(child: CircularProgressIndicator());
-            } else if (state is Error) {
-              return Center(
-                child: Text(
-                  'state',//todo fix to `state.msg`
-                  style: const TextStyle(color: Colors.red, fontSize: 16),
-                ),
-              );
+            } else if (state is Error<SudokuGameModel>) {
+              return buildError(state.msg);
             } else if (state is Success<SudokuGameModel>) {
               final model = state.value;
               return buildContent(model!);
             }
             return const SizedBox.shrink();
           },
+        ),
+      ),
+    );
+  }
+
+  Widget buildError(String? msg) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              msg == null || msg.isEmpty ? 'Something went wrong' : msg,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.red, fontSize: 16),
+            ),
+            const SizedBox(height: 16),
+            PlatformTextButton(
+              onPressed: () => context.read<MainBloc>().fetchSudokuChallenge(),
+              child: const Text('Retry'),
+            ),
+          ],
         ),
       ),
     );
